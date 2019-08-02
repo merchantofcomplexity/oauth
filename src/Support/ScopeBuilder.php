@@ -32,21 +32,31 @@ class ScopeBuilder
         $this->scopeTransformer = $scopeTransformer;
     }
 
+    /**
+     * @param ScopeModel ...$scopes
+     * @return ScopeModel[]
+     */
     public function filterScopes(ScopeModel ...$scopes): array
     {
         $availableScopes = [];
+
         foreach ($scopes as $scope) {
-            if ($scopeModel = $this->scopeProvider->scopeOfIdentifier((string)$scope)) {
-                $availableScopes[] = $scopeModel;
+            if ($this->isScopeAvailable((string)$scope)) {
+                $availableScopes[] = clone $scope;
             }
         }
 
         return $availableScopes;
     }
 
+    public function isScopeAvailable(string $scope): bool
+    {
+        return null !== $this->scopeProvider->scopeOfIdentifier($scope);
+    }
+
     /**
      * @param string $name
-     * @param array$arguments
+     * @param array $arguments
      *
      * @return mixed
      */
