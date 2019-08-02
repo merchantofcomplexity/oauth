@@ -56,6 +56,10 @@ class OauthServerServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        if (!$this->app->configurationIsCached()) {
+            $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', 'oauth');
+        }
+
         $this->registerHttpMessageFactory();
 
         $this->registerAuthorizationServer();
@@ -77,11 +81,9 @@ class OauthServerServiceProvider extends ServiceProvider
      */
     protected function registerAuthorizationServer(): void
     {
-        $config = config('oauth');
+        $key = config('oauth.authorization_server.private_key');
 
-        $key = $config->get('authorization_server.private_key');
-
-        if ($passphrase = $config->get('authorization_server.private_key')) {
+        if ($passphrase = config('oauth.authorization_server.private_key')) {
             $key = new CryptKey($key, $passphrase);
         }
 
@@ -90,12 +92,12 @@ class OauthServerServiceProvider extends ServiceProvider
             $this->app->get(AccessTokenRepositoryInterface::class),
             $this->app->get(ScopeRepositoryInterface::class),
             $key,
-            $config->get('authorization_server.encryption_key'),
+            config('oauth.authorization_server.encryption_key'),
         );
 
-        $refreshTtl = new DateInterval($config->get('authorization_server.refresh_token_ttl'));
-        $accessTtl = new DateInterval($config->get('authorization_server.access_token_ttl'));
-        $authCodeTTl = new DateInterval($config->get('authorization_server.auth_code_ttl'));
+        $refreshTtl = new DateInterval(config('oauth.authorization_server.refresh_token_ttl'));
+        $accessTtl = new DateInterval(config('oauth.authorization_server.access_token_ttl'));
+        $authCodeTTl = new DateInterval(config('oauth.authorization_server.auth_code_ttl'));
 
         $this->enableAuthorizationCodeGrant($authorizationServer, $authCodeTTl, $refreshTtl, $accessTtl);
         $this->enableRefreshTokenGrant($authorizationServer, $refreshTtl, $accessTtl);
@@ -108,9 +110,7 @@ class OauthServerServiceProvider extends ServiceProvider
 
     protected function registerResourceServer(): void
     {
-        $config = config('oauth');
-
-        $publicKey = $config->get('resource_server.public_key');
+        $publicKey = config('oauth.resource_server.public_key');
 
         $this->app->bind(ResourceServer::class, function (Application $app) use ($publicKey) {
             return new ResourceServer(
@@ -174,5 +174,4 @@ class OauthServerServiceProvider extends ServiceProvider
             ResourceServer::class
         ]);
     }
-
 }
