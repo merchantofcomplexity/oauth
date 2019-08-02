@@ -4,16 +4,17 @@ namespace MerchantOfComplexity\Oauth\Support;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
-use MerchantOfComplexity\Oauth\League\Entity\Identity as IdentityEntity;
+use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer;
-use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 use MerchantOfComplexity\Oauth\Support\Value\ClientRedirectUri;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @deprecated
+ */
 class AuthorizationApproval
 {
     /**
@@ -31,18 +32,11 @@ class AuthorizationApproval
      */
     private $userTransformer;
 
-    /**
-     * @var ScopeTransformer
-     */
-    private $scopeTransformer;
-
     public function __construct(ResponseFactory $responseFactory,
-                                OauthUserTransformer $userTransformer,
-                                ScopeTransformer $scopeTransformer)
+                                OauthUserTransformer $userTransformer)
     {
         $this->responseFactory = $responseFactory;
         $this->userTransformer = $userTransformer;
-        $this->scopeTransformer = $scopeTransformer;
     }
 
     public function approved(AuthorizationRequest $authRequest, Identity $identity): AuthorizationRequest
@@ -72,7 +66,8 @@ class AuthorizationApproval
 
     public function buildAuthorizationView(AuthorizationRequest $authorizationRequest,
                                            Identity $identity,
-                                           Request $request): Response
+                                           Request $request,
+                                           ScopeModel ...$scopes): Response
     {
         $request->session()->flash($this->sessionKey, $authorizationRequest);
 
@@ -81,19 +76,13 @@ class AuthorizationApproval
             'client' => $authorizationRequest->getClient(),
             'request' => $request,
             'identity' => $identity,
-            'scopes' => ['todo']
+            'scopes' => $scopes
         ]);
     }
 
     protected function approveAuthorizationRequest(AuthorizationRequest $authRequest, Identity $identity): void
     {
-        $identityEntity = new IdentityEntity();
-
-        $identityEntity->setIdentifier(
-            $identity->getIdentifier()->identify()
-        );
-
-        $authRequest->setUser($identityEntity);
+        $authRequest->setUser(($this->userTransformer)($identity));
 
         $authRequest->setAuthorizationApproved(true);
     }

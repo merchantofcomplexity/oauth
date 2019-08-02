@@ -3,67 +3,20 @@
 namespace MerchantOfComplexity\Oauth\Http\Middleware;
 
 use Illuminate\Http\Request;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
-use MerchantOfComplexity\Authters\Application\Http\Middleware\Authentication;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
 use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\LocalToken;
+use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\RecallerToken;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
-use MerchantOfComplexity\Oauth\Support\AuthorizationApproval;
-use MerchantOfComplexity\Oauth\Support\ConvertPsrResponses;
-use Psr\Http\Message\ResponseInterface;
-use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class OauthAuthorization extends Authentication
+final class OauthAuthorization extends OauthApproval
 {
-    use ConvertPsrResponses;
-
-    /**
-     * @var AuthorizationApproval
-     */
-    private $authorizationApproval;
-
-    /**
-     * @var AuthorizationServer
-     */
-    private $authorizationServer;
-
-    /**
-     * @var ClientProvider
-     */
-    private $clientProvider;
-
-    /**
-     * @var AccessTokenProvider
-     */
-    private $accessTokenProvider;
-
-    /**
-     * @var HttpMessageFactoryInterface
-     */
-    private $httpMessageFactory;
-
-    public function __construct(AuthorizationApproval $authorizationApproval,
-                                AuthorizationServer $authorizationServer,
-                                ClientProvider $clientProvider,
-                                AccessTokenProvider $accessTokenProvider,
-                                HttpMessageFactoryInterface $httpMessageFactory)
-    {
-        $this->authorizationApproval = $authorizationApproval;
-        $this->authorizationServer = $authorizationServer;
-        $this->clientProvider = $clientProvider;
-        $this->accessTokenProvider = $accessTokenProvider;
-        $this->httpMessageFactory = $httpMessageFactory;
-    }
-
     protected function processAuthentication(Request $request): ?Response
     {
         $psrRequest = $this->httpMessageFactory->createRequest($request);
+
         $psrResponse = $this->httpMessageFactory->createResponse(new Response(''));
 
         try {
@@ -72,25 +25,23 @@ class OauthAuthorization extends Authentication
             if ($request->isMethod('get')) {
                 $authRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
 
-                if (!$this->hasValidAuthorization($authRequest->getClient(), $identity)) {
-                    return $this->authorizationApproval->buildAuthorizationView($authRequest, $identity, $request);
+                if (!$this->hasValidAuthorization($authRequest, $identity)) {
+                    $scopesModels = $this->scopeBuilder->toModelArray(...$authRequest->getScopes());
+
+                    $scopes = $this->scopeBuilder->filterScopes(...$scopesModels);
+
+                    return $this->buildAuthorizationView($authRequest, $identity, $request, ...$scopes);
                 }
 
-                return $this->completeAuthorization(
-                    $this->authorizationApproval->approved($authRequest, $identity),
-                    $psrResponse
-                );
+                return $this->completeAuthorization($this->approveRequest($authRequest, $identity), $psrResponse);
             }
 
             if ($request->isMethod('post')) {
-                return $this->completeAuthorization(
-                    $this->authorizationApproval->confirmed($request, $identity),
-                    $psrResponse
-                );
+                return $this->completeAuthorization($this->confirmRequest($request, $identity), $psrResponse);
             }
 
             if ($request->isMethod('delete')) {
-                return $this->authorizationApproval->denied($request);
+                return $this->denyRequest($request);
             }
 
             throw new AuthenticationException("invalid request");
@@ -99,25 +50,24 @@ class OauthAuthorization extends Authentication
         }
     }
 
-    protected function completeAuthorization(AuthorizationRequest $authRequest, ResponseInterface $response): Response
+    protected function hasValidAuthorization(AuthorizationRequest $authRequest, Identity $identity): bool
     {
-        return $this->convertResponse(
-            $this->authorizationServer->completeAuthorizationRequest($authRequest, $response)
+        $clientModel = $this->clientProvider->clientOfIdentifier(
+            $authRequest->getClient()->getIdentifier()
         );
-    }
 
-    protected function hasValidAuthorization(ClientEntityInterface $client, Identity $identity): bool
-    {
-        $clientModel = $this->clientProvider->clientOfIdentifier($client->getIdentifier());
-
-        // fixMe check scopes from AuthRequest and token
         // todo skip authorization from client
 
-        if ($token = $this->accessTokenProvider->findValidToken($clientModel, $identity)) {
-            return true;
+        $token = $this->accessTokenProvider->findValidToken($clientModel, $identity);
+
+        if (!$token) {
+            return false;
         }
 
-        return false;
+        $scopes = $this->scopeBuilder->filterScopes(...$token->getScopes());
+        $scopeEntities = $this->scopeBuilder->toLeagueArray(...$scopes);
+
+        return $scopeEntities === $authRequest->getScopes();
     }
 
     public function extractTokenIdentity(): Identity
@@ -126,8 +76,8 @@ class OauthAuthorization extends Authentication
             throw new AuthenticationException("login");
         }
 
-        if (!$token instanceof LocalToken) {
-            throw new AuthenticationException("local token only");
+        if (!$token instanceof LocalToken || !$token instanceof RecallerToken) {
+            throw new AuthenticationException("local and recaller token only");
         }
 
         return $token->getIdentity();
