@@ -27,7 +27,7 @@ interface ScopeTransformer
     public function toLeague(ScopeModel $scope): Scope;
 
     /**
-     * @param ScopeModel ...$scopes
+     * @param ScopeModel[] $scopes
      * @return Scope[]
      */
     public function toLeagueArray(ScopeModel ...$scopes): array;

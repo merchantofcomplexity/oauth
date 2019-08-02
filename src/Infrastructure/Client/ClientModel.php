@@ -19,7 +19,7 @@ class ClientModel extends Model
 
     public $incrementing = false;
 
-    protected $primaryKey = ' identifier';
+    protected $primaryKey = 'identifier';
 
     protected $keyType = 'string';
 

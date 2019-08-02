@@ -2,18 +2,19 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Transformer;
 
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\League\Entity\Scope;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer as Transformer;
 
 class ScopeTransformer implements Transformer
 {
-    public function toModel(Scope $scope): ScopeModel
+    public function toModel(ScopeEntityInterface $scope): ScopeModel
     {
         return new ScopeModel($scope->getIdentifier());
     }
 
-    public function toModelArray(Scope ...$scopes): array
+    public function toModelArray(ScopeEntityInterface ...$scopes): array
     {
         return array_map(function (Scope $scope): ScopeModel {
             return $this->toModel($scope);

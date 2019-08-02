@@ -30,8 +30,8 @@ final class ClientRepository implements ClientRepositoryInterface
 
         $client = new Client();
 
-        $client->setIdentifier($client->getIdentifier());
-        $client->setRedirectUri(array_map('strval', $client->getRedirectUri()));
+        $client->setIdentifier($clientModel->getId());
+        $client->setRedirectUri(array_map('strval', $clientModel->getRedirectUris()));
 
         return $client;
     }

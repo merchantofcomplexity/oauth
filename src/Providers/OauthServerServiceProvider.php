@@ -19,8 +19,8 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
 use MerchantOfComplexity\Oauth\League\Repository\AccessTokenRepository;
+use MerchantOfComplexity\Oauth\League\Repository\AuthCodeRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ClientRepository;
 use MerchantOfComplexity\Oauth\League\Repository\IdentityRepository;
 use MerchantOfComplexity\Oauth\League\Repository\RefreshTokenRepository;
@@ -48,16 +48,20 @@ class OauthServerServiceProvider extends ServiceProvider
         BaseOauthUserTransformer::class => OauthUserTransformer::class,
         ClientRepositoryInterface::class => ClientRepository::class,
         UserRepositoryInterface::class => IdentityRepository::class,
-        AccessTokenRepositoryInterface::class => AccessTokenProvider::class,
-        AuthCodeRepositoryInterface::class => AccessTokenRepository::class,
+        AccessTokenRepositoryInterface::class => AccessTokenRepository::class,
+        AuthCodeRepositoryInterface::class => AuthCodeRepository::class,
         RefreshTokenRepositoryInterface::class => RefreshTokenRepository::class,
         ScopeRepositoryInterface::class => ScopeRepository::class,
     ];
 
-    public function register(): void
+    public function register($key): void
     {
         if (!$this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', 'oauth');
+            $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', $key);
+        }
+
+        foreach ($this->bindings as $abstract => $concrete) {
+            $this->app->bindIf($abstract, $concrete);
         }
 
         $this->registerHttpMessageFactory();

@@ -8,17 +8,6 @@ use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 
 trait HasTokenModel
 {
-    protected $primaryKey = ' identifier';
-
-    protected $keyType = 'string';
-
-    public $incrementing = false;
-
-    protected $fillable = [
-        'identifier', 'identity_id', 'client_id',
-        'scopes', 'expires_at'
-    ];
-
     public function client(): BelongsTo
     {
         return $this->belongsTo(ClientModel::class, 'identifier', 'client_id');

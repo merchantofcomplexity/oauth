@@ -14,7 +14,7 @@ class RefreshTokenModel extends Model
 
     protected $table = 'oauth2_refresh_token';
 
-    protected $primaryKey = ' identifier';
+    protected $primaryKey = 'identifier';
 
     protected $keyType = 'string';
 
