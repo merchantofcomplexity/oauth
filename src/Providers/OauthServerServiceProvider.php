@@ -54,10 +54,10 @@ class OauthServerServiceProvider extends ServiceProvider
         ScopeRepositoryInterface::class => ScopeRepository::class,
     ];
 
-    public function register($key): void
+    public function register(): void
     {
         if (!$this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', $key);
+            $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', 'oauth');
         }
 
         foreach ($this->bindings as $abstract => $concrete) {

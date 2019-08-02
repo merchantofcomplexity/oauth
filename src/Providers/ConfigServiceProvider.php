@@ -13,6 +13,8 @@ class ConfigServiceProvider extends ServiceProvider
                 [$this->getConfigPath() => config_path('oauth.php')],
                 'config'
             );
+
+            $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         }
     }
 
