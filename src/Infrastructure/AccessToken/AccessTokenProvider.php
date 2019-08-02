@@ -33,7 +33,7 @@ class AccessTokenProvider
         }
 
         $token = $clientModel->tokens()
-            ->where('identity_id', $identity)
+            ->where('identity_id', $identity->getIdentifier()->identify())
             ->where('revoked', 0)
             ->where('expires_at', '>', Carbon::now())
             ->latest('expires_at')

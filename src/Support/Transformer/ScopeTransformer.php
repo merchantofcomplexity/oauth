@@ -14,7 +14,7 @@ class ScopeTransformer implements Transformer
         return new ScopeModel($scope->getIdentifier());
     }
 
-    public function toModelArray(ScopeEntityInterface ...$scopes): array
+    public function toModelArray(array $scopes): array
     {
         return array_map(function (Scope $scope): ScopeModel {
             return $this->toModel($scope);
@@ -30,7 +30,7 @@ class ScopeTransformer implements Transformer
         return $scopeEntity;
     }
 
-    public function toLeagueArray(ScopeModel ...$scopes): array
+    public function toLeagueArray(array $scopes): array
     {
         return array_map(function (ScopeModel $scope): Scope {
             return $this->toLeague($scope);

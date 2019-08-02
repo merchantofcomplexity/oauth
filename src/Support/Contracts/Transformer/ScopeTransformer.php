@@ -18,7 +18,7 @@ interface ScopeTransformer
      * @param ScopeEntityInterface[] $scopes
      * @return array
      */
-    public function toModelArray(ScopeEntityInterface ...$scopes): array;
+    public function toModelArray(array $scopes): array;
 
     /**
      * @param ScopeModel $scope
@@ -30,5 +30,5 @@ interface ScopeTransformer
      * @param ScopeModel[] $scopes
      * @return Scope[]
      */
-    public function toLeagueArray(ScopeModel ...$scopes): array;
+    public function toLeagueArray(array $scopes): array;
 }
