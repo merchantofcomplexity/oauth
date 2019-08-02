@@ -14,7 +14,7 @@ class RefreshTokenProvider
         $this->model = $refreshTokenModel;
     }
 
-    public function refreshTokenOfIdentifier(string $identifier): RefreshTokenModel
+    public function refreshTokenOfIdentifier(string $identifier): ?RefreshTokenModel
     {
         return $this->model
             ->newModelQuery()

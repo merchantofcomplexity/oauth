@@ -61,7 +61,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
             'identifier' => $accessTokenEntity->getIdentifier(),
             'client_id' => $client->getId(),
             'identity_id' => $accessTokenEntity->getUserIdentifier(),
-            'scopes' => $this->scopeTransformer->toModelArray($accessTokenEntity->getScopes()),
+            'scopes' => json_encode($this->scopeTransformer->toModelArray($accessTokenEntity->getScopes())),
             'expires_at' => $accessTokenEntity->getExpiryDateTime()
         ];
 

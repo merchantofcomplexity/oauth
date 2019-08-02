@@ -14,7 +14,7 @@ class ClientProvider
         $this->model = $clientModel;
     }
 
-    public function clientOfIdentifier(string $identifier): ClientModel
+    public function clientOfIdentifier(string $identifier): ?ClientModel
     {
         return $this->model
             ->newModelQuery()

@@ -14,7 +14,7 @@ class AuthCodeProvider
         $this->model = $authCodeModel;
     }
 
-    public function authCodeOfIdentifier(string $identifier): AuthCodeModel
+    public function authCodeOfIdentifier(string $identifier): ?AuthCodeModel
     {
         return $this->model
             ->newModelQuery()

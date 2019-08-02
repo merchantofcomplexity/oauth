@@ -55,32 +55,30 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
             'identifier' => $authCodeEntity->getIdentifier(),
             'client_id' => $client->getId(),
             'identity_id' => $authCodeEntity->getUserIdentifier(),
-            'scopes' => $this->scopeTransformer->toModelArray($authCodeEntity->getScopes()),
+            'scopes' => json_encode($this->scopeTransformer->toModelArray($authCodeEntity->getScopes())),
             'expires_at' => $authCodeEntity->getExpiryDateTime()
         ];
 
         $this->authCodeProvider->store($data);
     }
 
-    /**
-     * Revoke an auth code.
-     *
-     * @param string $codeId
-     */
     public function revokeAuthCode($codeId)
     {
-        // TODO: Implement revokeAuthCode() method.
+        $authCode = $this->authCodeProvider->authCodeOfIdentifier($codeId);
+
+        if($authCode){
+            $authCode->revoke();
+        }
     }
 
-    /**
-     * Check if the auth code has been revoked.
-     *
-     * @param string $codeId
-     *
-     * @return bool Return true if this code has been revoked
-     */
     public function isAuthCodeRevoked($codeId)
     {
-        // TODO: Implement isAuthCodeRevoked() method.
+        $authCode = $this->authCodeProvider->authCodeOfIdentifier($codeId);
+
+        if (!$authCode) {
+            return true;
+        }
+
+        return $authCode->isRevoked();
     }
 }

@@ -9,7 +9,7 @@ class ScopeProvider
      */
     private $scopes = [];
 
-    public function scopeOfIdentifier(string $identifier): ScopeModel
+    public function scopeOfIdentifier(string $identifier): ?ScopeModel
     {
         return $this->scopes[$identifier] ?? null;
     }
