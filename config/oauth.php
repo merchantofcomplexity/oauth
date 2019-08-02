@@ -16,11 +16,15 @@ return [
 
         'refresh_token_ttl' => 'P1M',
 
-        'enable_client_credentials_grant' => true,
+        'auth_code_ttl' => 'PT10M',
 
-        'enable_password_grant' => true,
-
-        'auth_code_ttl' => 'PT10M'
+        'enable_grants' => [
+            'authorization_code' => true,
+            'client_credentials' => true,
+            'implicit' => true,
+            'password' => true,
+            'refresh_token' => true,
+        ],
     ],
 
     'resource_server' => [

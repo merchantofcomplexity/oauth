@@ -19,6 +19,8 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\Repositories\UserRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
 use MerchantOfComplexity\Oauth\League\Repository\AccessTokenRepository;
 use MerchantOfComplexity\Oauth\League\Repository\AuthCodeRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ClientRepository;
@@ -64,6 +66,19 @@ class OauthServerServiceProvider extends ServiceProvider
             $this->app->bindIf($abstract, $concrete);
         }
 
+        // inMemory ScopeProvider
+        $this->app->singleton(ScopeProvider::class, function () {
+            $scopes = config('oauth.scopes', []);
+
+            $scopeProvider = new ScopeProvider();
+
+            foreach ($scopes as $scope) {
+                $scopeProvider->store(new ScopeModel($scope));
+            }
+
+            return $scopeProvider;
+        });
+
         $this->registerHttpMessageFactory();
 
         $this->registerAuthorizationServer();
@@ -96,7 +111,7 @@ class OauthServerServiceProvider extends ServiceProvider
             $this->app->get(AccessTokenRepositoryInterface::class),
             $this->app->get(ScopeRepositoryInterface::class),
             $key,
-            config('oauth.authorization_server.encryption_key'),
+            config('oauth.authorization_server.encryption_key')
         );
 
         $refreshTtl = new DateInterval(config('oauth.authorization_server.refresh_token_ttl'));
