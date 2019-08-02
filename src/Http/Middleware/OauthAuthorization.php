@@ -67,55 +67,36 @@ class OauthAuthorization extends Authentication
         $psrResponse = $this->httpMessageFactory->createResponse(new Response(''));
 
         try {
-            $authorizationRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
-            $userIdentity = $this->extractTokenIdentity();
+            $identity = $this->extractTokenIdentity();
 
             if ($request->isMethod('get')) {
-                return $this->authorize($authorizationRequest, $userIdentity, $request, $psrResponse);
+                $authRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
+
+                if (!$this->hasValidAuthorization($authRequest->getClient(), $identity)) {
+                    return $this->authorizationApproval->buildAuthorizationView($authRequest, $identity, $request);
+                }
+
+                return $this->completeAuthorization(
+                    $this->authorizationApproval->approved($authRequest, $identity),
+                    $psrResponse
+                );
             }
 
             if ($request->isMethod('post')) {
-                return $this->confirmAuthorization($userIdentity, $request, $psrResponse);
+                return $this->completeAuthorization(
+                    $this->authorizationApproval->confirmed($request, $identity),
+                    $psrResponse
+                );
             }
 
             if ($request->isMethod('delete')) {
-                return $this->denyAuthorization();
+                return $this->authorizationApproval->denied($request);
             }
 
             throw new AuthenticationException("invalid request");
         } catch (OAuthServerException $exception) {
             return $this->convertResponse($exception->generateHttpResponse($psrResponse));
         }
-    }
-
-    protected function authorize(AuthorizationRequest $authRequest,
-                                 Identity $identity,
-                                 Request $request,
-                                 ResponseInterface $serverResponse): Response
-    {
-        if (!$this->hasValidAuthorization($authRequest->getClient(), $identity)) {
-            return $this->authorizationApproval->buildAuthorizationView($authRequest, $identity, $request);
-        }
-
-        return $this->completeAuthorization(
-            $this->authorizationApproval->approved($authRequest, $identity),
-            $serverResponse
-        );
-    }
-
-    protected function confirmAuthorization(Identity $identity,
-                                            Request $request,
-                                            ResponseInterface $serverResponse): Response
-    {
-        return $this->completeAuthorization(
-            $this->authorizationApproval->confirmed($request, $identity),
-            $serverResponse
-        );
-    }
-
-    protected function denyAuthorization(): Response
-    {
-
     }
 
     protected function completeAuthorization(AuthorizationRequest $authRequest, ResponseInterface $response): Response
@@ -130,7 +111,7 @@ class OauthAuthorization extends Authentication
         $clientModel = $this->clientProvider->clientOfIdentifier($client->getIdentifier());
 
         // fixMe check scopes from AuthRequest and token
-        // todo skip authorization
+        // todo skip authorization from client
 
         if ($token = $this->accessTokenProvider->findValidToken($clientModel, $identity)) {
             return true;
