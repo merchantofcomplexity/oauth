@@ -12,16 +12,14 @@ return [
 
         'encryption_key_type' => 'plain', // defuse
 
-        'access_token_ttl' => 'PT5H',
+        'access_token_ttl' => 'PT1H',
 
         'refresh_token_ttl' => 'P1M',
 
         'auth_code_ttl' => 'PT10M',
 
         'enable_grants' => [
-            'authorization_code' => true,
             'client_credentials' => true,
-            'implicit' => true,
             'password' => true,
             'refresh_token' => true,
         ],

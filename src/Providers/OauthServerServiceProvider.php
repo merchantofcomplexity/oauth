@@ -119,10 +119,20 @@ class OauthServerServiceProvider extends ServiceProvider
         $authCodeTTl = new DateInterval(config('oauth.authorization_server.auth_code_ttl'));
 
         $this->enableAuthorizationCodeGrant($authorizationServer, $authCodeTTl, $refreshTtl, $accessTtl);
-        $this->enableRefreshTokenGrant($authorizationServer, $refreshTtl, $accessTtl);
-        $this->enableClientCredentialsGrant($authorizationServer, $accessTtl);
+
         $this->enableImplicitGrant($authorizationServer, $accessTtl);
-        $this->enablePasswordGrant($authorizationServer, $refreshTtl, $accessTtl);
+
+        if (true === config('oauth.authorization_server.enable_grants.refresh_token')) {
+            $this->enableRefreshTokenGrant($authorizationServer, $refreshTtl, $accessTtl);
+        }
+
+        if (true === config('oauth.authorization_server.enable_grants.client_credentials')) {
+            $this->enableClientCredentialsGrant($authorizationServer, $accessTtl);
+        }
+
+        if (true === config('oauth.authorization_server.enable_grants.password')) {
+            $this->enablePasswordGrant($authorizationServer, $refreshTtl, $accessTtl);
+        }
 
         $this->app->instance(AuthorizationServer::class, $authorizationServer);
     }
