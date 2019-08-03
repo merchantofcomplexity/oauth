@@ -4,19 +4,20 @@ namespace MerchantOfComplexity\Oauth\Support\Listeners;
 
 use League\Event\EventInterface;
 use League\Event\ListenerInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\RequestEvent;
+use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RevokeAllAuthCodeByClientId implements ListenerInterface
 {
     /**
-     * @var ClientRepositoryInterface
+     * @var $clientProvider
      */
-    private $clientRepository;
+    private $clientProvider;
 
-    public function __construct(ClientRepositoryInterface $clientRepository)
+    public function __construct(ClientProvider $clientProvider)
     {
-        $this->clientRepository = $clientRepository;
+        $this->clientProvider = $clientProvider;
     }
 
     public function handle(EventInterface $event): void
@@ -24,6 +25,13 @@ class RevokeAllAuthCodeByClientId implements ListenerInterface
         if ($event->getName() !== RequestEvent::ACCESS_TOKEN_ISSUED) {
             return;
         }
+
+        /** @var ServerRequestInterface $request */
+        $request = $event->getRequest();
+
+        $this->clientProvider->revokeAllAuthCode(
+            $request->getParsedBody()['client_id']
+        );
     }
 
     public function isListener($listener): bool

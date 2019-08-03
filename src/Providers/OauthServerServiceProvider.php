@@ -206,9 +206,9 @@ class OauthServerServiceProvider extends ServiceProvider
 
         $events = config('oauth.listeners');
 
-        foreach ($events as $event) {
-            foreach ($event as $eventName => $listenerClass) {
-                $emitter->addListener($eventName, $listenerClass);
+        foreach ($events as $eventName => $listeners) {
+            foreach ($listeners as $listener) {
+                $emitter->addListener($eventName, $this->app->get($listener));
             }
         }
 

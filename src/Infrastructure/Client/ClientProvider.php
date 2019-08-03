@@ -3,6 +3,7 @@
 namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 
 use Illuminate\Database\Eloquent\Collection;
+use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
 
 class ClientProvider
 {
@@ -27,6 +28,17 @@ class ClientProvider
     public function usersOfClient(string $identifier): Collection
     {
         // fix oauth identity model
+    }
+
+    public function revokeAllAuthCode(string $identifier): void
+    {
+        $this->model->newModelQuery()->authCodes()
+            ->where('revoke', 0)
+            ->where('client_id', $identifier)
+            ->get()
+            ->each(function (AuthCodeModel $model) {
+                $model->revoke();
+            });
     }
 
     public function store(array $data): ClientModel

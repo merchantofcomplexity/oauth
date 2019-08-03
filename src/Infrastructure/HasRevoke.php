@@ -6,7 +6,7 @@ trait HasRevoke
 {
     public function revoke(): void
     {
-        if ($this->exists) {
+        if ($this->exists && !$this->isRevoked()) {
             $this['revoked'] = 1;
 
             $this->save();
