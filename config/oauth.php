@@ -1,5 +1,7 @@
 <?php
 
+use League\OAuth2\Server\RequestEvent;
+
 return [
 
     'authorization_server' => [
@@ -32,5 +34,18 @@ return [
 
     'scopes' => [
 
+    ],
+
+    'listeners' => [
+
+        RequestEvent::ACCESS_TOKEN_ISSUED => [],
+
+        RequestEvent::REFRESH_TOKEN_ISSUED => [],
+
+        RequestEvent::USER_AUTHENTICATION_FAILED => [],
+
+        RequestEvent::CLIENT_AUTHENTICATION_FAILED =>[],
+
+        RequestEvent::REFRESH_TOKEN_CLIENT_FAILED => [],
     ]
 ];

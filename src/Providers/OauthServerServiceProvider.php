@@ -6,6 +6,8 @@ use DateInterval;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use League\Event\Emitter;
+use League\Event\EmitterInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\CryptKey;
 use League\OAuth2\Server\Grant\AuthCodeGrant;
@@ -115,6 +117,8 @@ class OauthServerServiceProvider extends ServiceProvider
             config('oauth.authorization_server.encryption_key')
         );
 
+        $authorizationServer->setEmitter($this->getEmitterInstance());
+
         $refreshTtl = new DateInterval(config('oauth.authorization_server.refresh_token_ttl'));
         $accessTtl = new DateInterval(config('oauth.authorization_server.access_token_ttl'));
         $authCodeTTl = new DateInterval(config('oauth.authorization_server.auth_code_ttl'));
@@ -194,6 +198,21 @@ class OauthServerServiceProvider extends ServiceProvider
     protected function enableClientCredentialsGrant(AuthorizationServer $server, DateInterval $accessTtl): void
     {
         $server->enableGrantType(new ClientCredentialsGrant(), $accessTtl);
+    }
+
+    protected function getEmitterInstance(): EmitterInterface
+    {
+        $emitter = new Emitter();
+
+        $events = config('oauth.listeners');
+
+        foreach ($events as $event) {
+            foreach ($event as $eventName => $listenerClass) {
+                $emitter->addListener($eventName, $listenerClass);
+            }
+        }
+
+        return $emitter;
     }
 
     public function provides()
