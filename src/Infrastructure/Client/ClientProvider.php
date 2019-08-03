@@ -33,7 +33,7 @@ class ClientProvider
     public function revokeAllAuthCode(string $identifier): void
     {
         $this->model->newModelQuery()->authCodes()
-            ->where('revoke', 0)
+            ->where('revoked', 0)
             ->where('client_id', $identifier)
             ->get()
             ->each(function (AuthCodeModel $model) {
