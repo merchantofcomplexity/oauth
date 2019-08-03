@@ -22,5 +22,4 @@ final class Client implements ClientEntityInterface
     {
         $this->redirectUri = $redirectUri;
     }
-
 }

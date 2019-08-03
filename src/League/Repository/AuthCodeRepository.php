@@ -62,7 +62,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         $this->authCodeProvider->store($data);
     }
 
-    public function revokeAuthCode($codeId)
+    public function revokeAuthCode($codeId): void
     {
         $authCode = $this->authCodeProvider->authCodeOfIdentifier($codeId);
 
@@ -71,7 +71,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
         }
     }
 
-    public function isAuthCodeRevoked($codeId)
+    public function isAuthCodeRevoked($codeId): bool
     {
         $authCode = $this->authCodeProvider->authCodeOfIdentifier($codeId);
 

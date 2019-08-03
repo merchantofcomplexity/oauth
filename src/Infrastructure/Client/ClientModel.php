@@ -6,25 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
+use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\HasGrants;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRedirectUri;
-use MerchantOfComplexity\Oauth\Infrastructure\HasScopes;
+use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
 use MerchantOfComplexity\Oauth\Infrastructure\OauthIdentityModel;
 
 class ClientModel extends Model
 {
-    use HasScopes, HasGrants, HasRedirectUri;
+    use HasGrants, HasRedirectUri, HasRevoke;
 
     protected $table = 'oauth2_client';
 
-    public $incrementing = false;
-
     protected $primaryKey = 'identifier';
+
+    public $incrementing = false;
 
     protected $keyType = 'string';
 
     protected $fillable = [
-        'identifier', 'secret', 'identity_id', 'app_name'
+        'identifier', 'secret', 'identity_id', 'app_name', 'revoked'
     ];
 
     protected $hidden = 'secret';
@@ -36,12 +37,12 @@ class ClientModel extends Model
 
     public function tokens(): HasMany
     {
-        return $this->hasMany(AccessTokenModel::class, 'client_id', 'identifier');
+        return $this->hasMany(AccessTokenModel::class, 'client_id', 'identity_id');
     }
 
-    public function isActive(): bool
+    public function authCodes(): HasMany
     {
-        return $this['active'] === 1;
+        return $this->hasMany(AuthCodeModel::class, 'client_id', 'identity_id');
     }
 
     public function getId(): string

@@ -11,7 +11,6 @@ use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\Authenti
 use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\Tokenable;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationServiceFailure;
-use MerchantOfComplexity\Authters\Support\Exception\IdentityNotFound;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class ProvideOauthAuthentication implements AuthenticationProvider

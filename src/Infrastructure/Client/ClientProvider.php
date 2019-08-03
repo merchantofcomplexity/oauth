@@ -2,6 +2,8 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 
+use Illuminate\Database\Eloquent\Collection;
+
 class ClientProvider
 {
     /**
@@ -20,5 +22,15 @@ class ClientProvider
             ->newModelQuery()
             ->where('identifier', $identifier)
             ->first();
+    }
+
+    public function usersOfClient(string $identifier): Collection
+    {
+        // fix oauth identity model
+    }
+
+    public function store(array $data): ClientModel
+    {
+        return $this->model->newModelQuery()->create($data);
     }
 }

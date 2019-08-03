@@ -13,11 +13,10 @@ class CreateOAuth2Client extends Migration
             $table->string('secret',128);
             $table->uuid('identity_id')->index()->nullable();
             $table->string('app_name',100);
-            $table->json('scopes')->nullable();
             $table->json('redirect_uris')->nullable();
             $table->json('grants')->nullable();
 
-            $table->boolean('active')->default(0);
+            $table->boolean('revoked')->default(0);
 
             $table->timestampsTz();
         });
