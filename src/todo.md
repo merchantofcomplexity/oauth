@@ -1,6 +1,5 @@
 # FIX
 
-* scopes in jwt does not appears
 
 # TODO
 

@@ -44,6 +44,10 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $accessToken->setClient($clientEntity);
         $accessToken->setUserIdentifier($userIdentifier);
 
+        foreach ($scopes as $scope){
+            $accessToken->addScope($scope);
+        }
+
         return $accessToken;
     }
 
