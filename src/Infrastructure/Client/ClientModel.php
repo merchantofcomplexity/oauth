@@ -42,7 +42,7 @@ class ClientModel extends Model
 
     public function authCodes(): HasMany
     {
-        return $this->hasMany(AuthCodeModel::class, 'client_id', 'identity_id');
+        return $this->hasMany(AuthCodeModel::class, 'client_id', 'identifier');
     }
 
     public function getId(): string

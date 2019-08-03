@@ -30,15 +30,18 @@ class ClientProvider
         // fix oauth identity model
     }
 
-    public function revokeAllAuthCode(string $identifier): void
+    public function revokeAllClientAuthCodes(string $identifier): void
     {
-        $this->model->newModelQuery()->authCodes()
-            ->where('revoked', 0)
-            ->where('client_id', $identifier)
-            ->get()
-            ->each(function (AuthCodeModel $model) {
-                $model->revoke();
-            });
+        /** @var ClientModel $client */
+        if ($client = $this->model->newModelQuery()->where('identifier', $identifier)->first()) {
+            $client
+                ->authCodes()
+                ->where('revoked', 0)
+                ->where('client_id', $identifier)
+                ->each(function (AuthCodeModel $model) {
+                    $model->revoke();
+                });
+        }
     }
 
     public function store(array $data): ClientModel

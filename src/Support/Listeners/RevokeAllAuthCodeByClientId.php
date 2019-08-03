@@ -6,7 +6,6 @@ use League\Event\EventInterface;
 use League\Event\ListenerInterface;
 use League\OAuth2\Server\RequestEvent;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
-use Psr\Http\Message\ServerRequestInterface;
 
 class RevokeAllAuthCodeByClientId implements ListenerInterface
 {
@@ -22,15 +21,12 @@ class RevokeAllAuthCodeByClientId implements ListenerInterface
 
     public function handle(EventInterface $event): void
     {
-        if ($event->getName() !== RequestEvent::ACCESS_TOKEN_ISSUED) {
+        if (!$event instanceof RequestEvent || $event->getName() !== RequestEvent::ACCESS_TOKEN_ISSUED) {
             return;
         }
 
-        /** @var ServerRequestInterface $request */
-        $request = $event->getRequest();
-
-        $this->clientProvider->revokeAllAuthCode(
-            $request->getParsedBody()['client_id']
+        $this->clientProvider->revokeAllClientAuthCodes(
+            $event->getRequest()->getParsedBody()['client_id']
         );
     }
 
