@@ -13,7 +13,7 @@ class OauthTokenIssuerRegistry implements FirewallRegistry
     public function compose(FirewallAware $firewall, Closure $make)
     {
         if ($firewall->context()->contextKey()->getValue() === 'oauth') {
-            $firewall->addPreService('oauth-authorize',
+            $firewall->addPreService('oauth-token',
                 function (Application $app) {
                     return $app->get(OauthTokenIssuer::class);
                 });

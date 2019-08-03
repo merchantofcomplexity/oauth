@@ -53,6 +53,7 @@ final class OauthAuthentication extends Authentication
 
     protected function isAccessRoutesGranted(Request $request, OauthToken $token): bool
     {
+        // fixMe check original package as it request oauth2_scopes
         $routeScopes = $request->attributes->get('oauth_scopes', []);
 
         if (!$routeScopes) {
