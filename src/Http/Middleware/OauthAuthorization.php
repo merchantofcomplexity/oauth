@@ -3,51 +3,31 @@
 namespace MerchantOfComplexity\Oauth\Http\Middleware;
 
 use Illuminate\Http\Request;
-use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\LocalToken;
-use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\RecallerToken;
-use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
+use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 final class OauthAuthorization extends OauthApproval
 {
-    protected function processAuthentication(Request $request): ?Response
+    protected function authorizeRequest(Identity $identity,
+                                        Request $request,
+                                        ServerRequestInterface $psrRequest,
+                                        ResponseInterface $psrResponse): Response
     {
-        $psrRequest = $this->httpMessageFactory->createRequest($request);
+        $authRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
 
-        $psrResponse = $this->httpMessageFactory->createResponse(new Response(''));
+        if (!$this->hasValidAuthorization($authRequest, $identity)) {
+            $scopesModels = $this->scopeBuilder->toModelArray(...$authRequest->getScopes());
 
-        try {
-            $identity = $this->extractTokenIdentity();
+            $scopes = $this->scopeBuilder->filterScopes(...$scopesModels);
 
-            if ($request->isMethod('get')) {
-                $authRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
-
-                if (!$this->hasValidAuthorization($authRequest, $identity)) {
-                    $scopesModels = $this->scopeBuilder->toModelArray(...$authRequest->getScopes());
-
-                    $scopes = $this->scopeBuilder->filterScopes(...$scopesModels);
-
-                    return $this->buildAuthorizationView($authRequest, $identity, $request, ...$scopes);
-                }
-
-                return $this->completeAuthorization($this->approveRequest($authRequest, $identity), $psrResponse);
-            }
-
-            if ($request->isMethod('post')) {
-                return $this->completeAuthorization($this->confirmRequest($request, $identity), $psrResponse);
-            }
-
-            if ($request->isMethod('delete')) {
-                return $this->denyRequest($request);
-            }
-
-            throw new AuthenticationException("invalid request");
-        } catch (OAuthServerException $exception) {
-            return $this->convertResponse($exception->generateHttpResponse($psrResponse));
+            return $this->buildAuthorizationView($authRequest, $identity, $request, ...$scopes);
         }
+
+        return $this->approveAuthorizationRequest($authRequest, $identity, $psrResponse);
     }
 
     protected function hasValidAuthorization(AuthorizationRequest $authRequest, Identity $identity): bool
@@ -65,26 +45,30 @@ final class OauthAuthorization extends OauthApproval
         }
 
         $scopes = $this->scopeBuilder->filterScopes(...$token->getScopes());
+
         $scopeEntities = $this->scopeBuilder->toLeagueArray(...$scopes);
 
         return $scopeEntities === $authRequest->getScopes();
     }
 
-    public function extractTokenIdentity(): Identity
+    protected function buildAuthorizationView(AuthorizationRequest $authorizationRequest,
+                                              Identity $identity,
+                                              Request $request,
+                                              ScopeModel ...$scopes): Response
     {
-        if (!$token = $this->guard->storage()->getToken()) {
-            throw new AuthenticationException("login");
-        }
+        $request->session()->flash(self::SESSION_OAUTH_KEY, $authorizationRequest);
 
-        if (!$token instanceof LocalToken && !$token instanceof RecallerToken) {
-            throw new AuthenticationException("local and recaller token only");
-        }
-
-        return $token->getIdentity();
+        // fixMe
+        return $this->responseFactory->view('oauth.authorize', [
+            'client' => $authorizationRequest->getClient(),
+            'request' => $request,
+            'identity' => $identity,
+            'scopes' => $scopes
+        ]);
     }
 
     protected function requireAuthentication(Request $request): bool
     {
-        return $request->is('oauth/authorize*');
+        return $request->is('oauth/authorize*'); // catch all
     }
 }

@@ -5,18 +5,21 @@ namespace MerchantOfComplexity\Oauth\Http\Middleware;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use League\OAuth2\Server\AuthorizationServer;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use MerchantOfComplexity\Authters\Application\Http\Middleware\Authentication;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
+use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\LocalToken;
+use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\RecallerToken;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
+use MerchantOfComplexity\Authters\Support\Exception\AuthenticationServiceFailure;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\ConvertPsrResponses;
 use MerchantOfComplexity\Oauth\Support\ScopeBuilder;
-use MerchantOfComplexity\Oauth\Support\Value\ClientRedirectUri;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -79,62 +82,46 @@ abstract class OauthApproval extends Authentication
         $this->httpMessageFactory = $httpMessageFactory;
     }
 
-    protected function approveRequest(AuthorizationRequest $authRequest, Identity $identity): AuthorizationRequest
+    protected function processAuthentication(Request $request): ?Response
     {
-        $this->approveAuthorizationRequest($authRequest, $identity);
+        $psrRequest = $this->httpMessageFactory->createRequest($request);
 
-        return $authRequest;
+        $psrResponse = $this->httpMessageFactory->createResponse(new Response(''));
+
+        try {
+            return $this->authorizeRequest($this->extractTokenIdentity(), $request, $psrRequest, $psrResponse);
+        } catch (OAuthServerException $exception) {
+            return $this->convertResponse($exception->generateHttpResponse($psrResponse));
+        }
     }
 
-    protected function confirmRequest(Request $request, Identity $identity): AuthorizationRequest
-    {
-        $authRequest = $this->requireAuthorizationRequestFromSession($request);
+    /**
+     * @param Identity $identity
+     * @param Request $request
+     * @param ServerRequestInterface $psrRequest
+     * @param ResponseInterface $psrResponse
+     * @return Response
+     * @throws OAuthServerException
+     */
+    abstract protected function authorizeRequest(Identity $identity,
+                                                 Request $request,
+                                                 ServerRequestInterface $psrRequest,
+                                                 ResponseInterface $psrResponse): Response;
 
-        $this->approveAuthorizationRequest($authRequest, $identity);
-
-        return $authRequest;
-    }
-
-    protected function denyRequest(Request $request): Response
-    {
-        $authRequest = $this->requireAuthorizationRequestFromSession($request);
-
-        return $this->responseFactory->redirectTo(
-            ClientRedirectUri::fromAuthorizationRequest($authRequest, $request)->getValue()
-        );
-    }
-
-    protected function buildAuthorizationView(AuthorizationRequest $authorizationRequest,
-                                              Identity $identity,
-                                              Request $request,
-                                              ScopeModel ...$scopes): Response
-    {
-        $request->session()->flash(self::SESSION_OAUTH_KEY, $authorizationRequest);
-
-        // fixMe
-        return $this->responseFactory->view('oauth.authorize', [
-            'client' => $authorizationRequest->getClient(),
-            'request' => $request,
-            'identity' => $identity,
-            'scopes' => $scopes
-        ]);
-    }
-
-    protected function approveAuthorizationRequest(AuthorizationRequest $authRequest, Identity $identity): void
+    protected function approveAuthorizationRequest(AuthorizationRequest $authRequest,
+                                                   Identity $identity,
+                                                   ResponseInterface $psrResponse): Response
     {
         $authRequest->setUser(($this->userTransformer)($identity));
 
         $authRequest->setAuthorizationApproved(true);
-    }
 
-    protected function completeAuthorization(AuthorizationRequest $authRequest, ResponseInterface $response): Response
-    {
         return $this->convertResponse(
-            $this->authorizationServer->completeAuthorizationRequest($authRequest, $response)
+            $this->authorizationServer->completeAuthorizationRequest($authRequest, $psrResponse)
         );
     }
 
-    protected function requireAuthorizationRequestFromSession(Request $request): AuthorizationRequest
+    protected function extractAuthorizationRequestFromSession(Request $request): AuthorizationRequest
     {
         $authRequest = $request->session()->get(self::SESSION_OAUTH_KEY);
 
@@ -143,5 +130,18 @@ abstract class OauthApproval extends Authentication
         }
 
         return $authRequest;
+    }
+
+    public function extractTokenIdentity(): Identity
+    {
+        if (!$token = $this->guard->storage()->getToken()) {
+            throw new AuthenticationException("You must login first");
+        }
+
+        if (!$token instanceof LocalToken && !$token instanceof RecallerToken) {
+            throw new AuthenticationServiceFailure("only local and recaller token are allowed for oauth");
+        }
+
+        return $token->getIdentity();
     }
 }
