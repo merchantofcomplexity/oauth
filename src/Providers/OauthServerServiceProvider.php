@@ -3,6 +3,7 @@
 namespace MerchantOfComplexity\Oauth\Providers;
 
 use DateInterval;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use League\OAuth2\Server\AuthorizationServer;
@@ -96,7 +97,7 @@ class OauthServerServiceProvider extends ServiceProvider
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function registerAuthorizationServer(): void
     {
