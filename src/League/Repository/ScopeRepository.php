@@ -46,22 +46,12 @@ final class ScopeRepository implements ScopeRepositoryInterface
         return $this->scopeTransformer->toLeague($scope);
     }
 
-    /**
-     * Given a client, grant type and optional user identifier validate the set of scopes requested are valid and optionally
-     * append additional scopes or remove requested scopes.
-     *
-     * @param ScopeEntityInterface[] $scopes
-     * @param string $grantType
-     * @param ClientEntityInterface $clientEntity
-     * @param null|string $userIdentifier
-     *
-     * @return ScopeEntityInterface[]
-     */
     public function finalizeScopes(array $scopes,
                                    $grantType,
                                    ClientEntityInterface $clientEntity,
                                    $userIdentifier = null): array
     {
-        return [];
+        // checkMe default scopes
+        return $scopes;
     }
 }

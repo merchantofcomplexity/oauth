@@ -76,7 +76,7 @@ final class OauthAuthorization extends OauthApproval
             throw new AuthenticationException("login");
         }
 
-        if (!$token instanceof LocalToken || !$token instanceof RecallerToken) {
+        if (!$token instanceof LocalToken && !$token instanceof RecallerToken) {
             throw new AuthenticationException("local and recaller token only");
         }
 

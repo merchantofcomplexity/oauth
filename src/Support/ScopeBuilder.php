@@ -63,7 +63,7 @@ class ScopeBuilder
     public function __call(string $name, array $arguments)
     {
         if (!method_exists($this, $name)) {
-            return call_user_func_array([$this->scopeTransformer, $name], $arguments);
+            return call_user_func_array([$this->scopeTransformer, $name], [$arguments]);
         }
 
         throw new BadMethodCallException("Method $name not found in class " . __CLASS__);
