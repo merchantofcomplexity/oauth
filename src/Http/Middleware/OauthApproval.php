@@ -17,7 +17,7 @@ use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\ConvertPsrResponses;
-use MerchantOfComplexity\Oauth\Support\ScopeBuilder;
+use MerchantOfComplexity\Oauth\Support\ScopeManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
@@ -45,7 +45,7 @@ abstract class OauthApproval extends Authentication
     protected $accessTokenProvider;
 
     /**
-     * @var ScopeBuilder
+     * @var ScopeManager
      */
     protected $scopeBuilder;
 
@@ -68,7 +68,7 @@ abstract class OauthApproval extends Authentication
     public function __construct(AuthorizationServer $authorizationServer,
                                 ClientProvider $clientProvider,
                                 AccessTokenProvider $accessTokenProvider,
-                                ScopeBuilder $scopeBuilder,
+                                ScopeManager $scopeBuilder,
                                 OauthUserTransformer $userTransformer,
                                 ResponseFactory $responseFactory,
                                 HttpMessageFactoryInterface $httpMessageFactory)

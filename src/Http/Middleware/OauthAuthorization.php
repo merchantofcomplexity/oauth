@@ -48,7 +48,7 @@ final class OauthAuthorization extends OauthApproval
 
         $scopeEntities = $this->scopeBuilder->toLeagueArray(...$scopes);
 
-        return $scopeEntities === $authRequest->getScopes();
+        return  $this->scopeBuilder->equalsScopes($scopeEntities, $authRequest->getScopes());
     }
 
     protected function buildAuthorizationView(AuthorizationRequest $authorizationRequest,
@@ -69,6 +69,6 @@ final class OauthAuthorization extends OauthApproval
 
     protected function requireAuthentication(Request $request): bool
     {
-        return $request->is('oauth/authorize*'); // catch all
+        return $request->is('oauth/authorize*');
     }
 }

@@ -13,8 +13,9 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
  * @method ScopeTransformer toLeagueArray(ScopeModel $scope)
  * @method ScopeTransformer toModel(ScopeEntityInterface $scope)
  * @method ScopeTransformer toModelArray(ScopeEntityInterface $scope)
+ * @method ScopeTransformer toStringArray($scope)
  */
-class ScopeBuilder
+class ScopeManager
 {
     /**
      * @var ScopeProvider
@@ -52,6 +53,28 @@ class ScopeBuilder
     public function isScopeAvailable(string $scope): bool
     {
         return null !== $this->scopeProvider->scopeOfIdentifier($scope);
+    }
+
+    public function equalsScopes(array $scopes, array $aScopes): bool
+    {
+        if ($scopes === $aScopes) {
+            return true;
+        }
+
+        return empty($this->diffScopes($scopes, $aScopes));
+    }
+
+    /**
+     * @param array $scopes
+     * @param array $aScopes
+     * @return string[]
+     */
+    public function diffScopes(array $scopes, array $aScopes): array
+    {
+        return array_diff(
+            $this->scopeTransformer->toStringArray($scopes),
+            $this->scopeTransformer->toStringArray($aScopes)
+        );
     }
 
     /**

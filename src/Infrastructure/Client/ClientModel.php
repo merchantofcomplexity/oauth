@@ -37,7 +37,7 @@ class ClientModel extends Model
 
     public function tokens(): HasMany
     {
-        return $this->hasMany(AccessTokenModel::class, 'client_id', 'identity_id');
+        return $this->hasMany(AccessTokenModel::class, 'client_id', 'identifier');
     }
 
     public function authCodes(): HasMany
