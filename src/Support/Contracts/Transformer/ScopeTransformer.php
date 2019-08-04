@@ -31,4 +31,10 @@ interface ScopeTransformer
      * @return Scope[]
      */
     public function toLeagueArray(array $scopes): array;
+
+    /**
+     * @param string|ScopeModel[]|Scope[] $scopes
+     * @return string[]
+     */
+    public function toStringArray(array $scopes): array;
 }

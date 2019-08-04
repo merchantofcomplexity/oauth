@@ -36,4 +36,16 @@ class ScopeTransformer implements Transformer
             return $this->toLeague($scope);
         }, $scopes);
     }
+
+    public function toStringArray(array $scopes): array
+    {
+        return array_map(function ($scope) {
+            if ($scope instanceof Scope) {
+                return $scope->getIdentifier();
+            }
+
+            return (string)$scope;
+
+        }, $scopes);
+    }
 }

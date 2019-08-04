@@ -58,7 +58,7 @@ final class OauthToken extends Token
         $roles = [];
 
         foreach ($this->serverRequest->getAttribute('oauth_scopes', []) as $scope) {
-            $roles = sprintf('ROLE_OAUTH_%s', trim(strtoupper($scope)));
+            $roles[] = sprintf('ROLE_OAUTH_%s', trim(strtoupper($scope)));
         }
 
         return $roles;
