@@ -40,6 +40,10 @@ final class ClientRepository implements ClientRepositoryInterface
     {
         $clientModel = $this->clientProvider->clientOfIdentifier($clientIdentifier);
 
+        if (!$clientModel) {
+            return false;
+        }
+
         if (!$this->isGrantSupported($clientModel, $grantType)) {
             return false;
         }
