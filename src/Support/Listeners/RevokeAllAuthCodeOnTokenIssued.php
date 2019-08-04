@@ -7,7 +7,7 @@ use League\Event\ListenerInterface;
 use League\OAuth2\Server\RequestEvent;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 
-class RevokeAllAuthCodeByClientId implements ListenerInterface
+class RevokeAllAuthCodeOnTokenIssued implements ListenerInterface
 {
     /**
      * @var $clientProvider
@@ -25,7 +25,7 @@ class RevokeAllAuthCodeByClientId implements ListenerInterface
             return;
         }
 
-        $this->clientProvider->revokeAllClientAuthCodes(
+        $this->clientProvider->revokeAuthCodesByClientId(
             $event->getRequest()->getParsedBody()['client_id']
         );
     }

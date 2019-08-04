@@ -30,7 +30,7 @@ class ClientProvider
         // fix oauth identity model
     }
 
-    public function revokeAllClientAuthCodes(string $identifier): void
+    public function revokeAuthCodesByClientId(string $identifier): void
     {
         if ($client = $this->clientOfIdentifier($identifier)) {
             $client
