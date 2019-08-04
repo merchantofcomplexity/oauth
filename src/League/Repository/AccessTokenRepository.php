@@ -37,7 +37,9 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->scopeTransformer = $scopeTransformer;
     }
 
-    public function getNewToken(ClientEntityInterface $clientEntity, array $scopes, $userIdentifier = null): AccessTokenEntityInterface
+    public function getNewToken(ClientEntityInterface $clientEntity,
+                                array $scopes,
+                                $userIdentifier = null): AccessTokenEntityInterface
     {
         $accessToken = new AccessToken();
 
@@ -72,7 +74,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $this->accessTokenProvider->store($data);
     }
 
-    public function revokeAccessToken($tokenId)
+    public function revokeAccessToken($tokenId): void
     {
         $accessToken = $this->accessTokenProvider->tokenOfIdentifier($tokenId);
 
@@ -81,7 +83,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         }
     }
 
-    public function isAccessTokenRevoked($tokenId)
+    public function isAccessTokenRevoked($tokenId): bool
     {
         $accessToken = $this->accessTokenProvider->tokenOfIdentifier($tokenId);
 

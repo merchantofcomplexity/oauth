@@ -90,6 +90,7 @@ abstract class OauthApproval extends Authentication
         try {
             return $this->authorizeRequest($this->extractTokenIdentity(), $request, $psrRequest, $psrResponse);
         } catch (OAuthServerException $exception) {
+            throw $exception;
             return $this->convertResponse($exception->generateHttpResponse($psrResponse));
         }
     }

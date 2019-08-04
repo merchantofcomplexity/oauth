@@ -13,6 +13,6 @@ trait HasGrants
             return json_decode($this['grants']);
         }
 
-        return $this['grants'];
+        return $this['grants'] ?? [];
     }
 }

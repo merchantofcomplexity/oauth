@@ -37,12 +37,13 @@ final class OauthTokenIssuer extends Authentication
         $psrResponse = $this->httpMessageFactory->createResponse(new Response());
 
         try {
-            return $this->convertResponse(
-                $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse)
-            );
+            $response = $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse);
         } catch (OAuthServerException $serverException) {
-            return $serverException->generateHttpResponse($psrResponse);
+            throw $serverException;
+            $response = $serverException->generateHttpResponse($psrResponse);
         }
+
+        return $this->convertResponse($response);
     }
 
     protected function requireAuthentication(Request $request): bool

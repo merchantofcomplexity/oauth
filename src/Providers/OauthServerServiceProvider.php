@@ -52,7 +52,7 @@ class OauthServerServiceProvider extends ServiceProvider
         BaseScopeTransformer::class => ScopeTransformer::class,
         BaseOauthUserTransformer::class => OauthUserTransformer::class,
         ClientRepositoryInterface::class => ClientRepository::class,
-        UserRepositoryInterface::class => IdentityRepository::class,
+        //UserRepositoryInterface::class => IdentityRepository::class,
         AccessTokenRepositoryInterface::class => AccessTokenRepository::class,
         AuthCodeRepositoryInterface::class => AuthCodeRepository::class,
         RefreshTokenRepositoryInterface::class => RefreshTokenRepository::class,
