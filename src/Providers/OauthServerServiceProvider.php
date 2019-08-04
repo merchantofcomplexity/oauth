@@ -80,6 +80,7 @@ class OauthServerServiceProvider extends ServiceProvider
             return $scopeProvider;
         });
 
+        // todo let the dev bind it
         $this->registerHttpMessageFactory();
 
         $this->registerAuthorizationServer();

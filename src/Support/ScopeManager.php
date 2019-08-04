@@ -34,7 +34,7 @@ class ScopeManager
     }
 
     /**
-     * @param ScopeModel ...$scopes
+     * @param ScopeModel[] $scopes
      * @return ScopeModel[]
      */
     public function filterScopes(ScopeModel ...$scopes): array
@@ -77,18 +77,14 @@ class ScopeManager
         );
     }
 
-    /**
-     * @param string $name
-     * @param array $arguments
-     *
-     * @return mixed
-     */
     public function __call(string $name, array $arguments)
     {
         if (!method_exists($this, $name)) {
             return call_user_func_array([$this->scopeTransformer, $name], [$arguments]);
         }
 
-        throw new BadMethodCallException("Method $name not found in class " . __CLASS__);
+        throw new BadMethodCallException(
+            "Method $name not found in class " . get_class($this->scopeTransformer)
+        );
     }
 }

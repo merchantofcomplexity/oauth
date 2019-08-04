@@ -42,11 +42,11 @@ final class OauthGrants
     public static function has(string $grant): bool
     {
         return in_array($grant, [
+            self::AUTHORIZATION_CODE,
             self::CLIENT_CREDENTIALS,
+            self::IMPLICIT,
             self::PASSWORD,
             self::REFRESH_TOKEN,
-            self::AUTHORIZATION_CODE,
-            self::IMPLICIT,
         ]);
     }
 }
