@@ -4,8 +4,9 @@ namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 
 use Illuminate\Database\Eloquent\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
-class ClientProvider
+class ClientProvider implements ProvideClient
 {
     /**
      * @var ClientModel

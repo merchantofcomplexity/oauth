@@ -2,7 +2,9 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\RefreshToken;
 
-class RefreshTokenProvider
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
+
+class RefreshTokenProvider implements ProvideRefreshToken
 {
     /**
      * @var RefreshTokenModel

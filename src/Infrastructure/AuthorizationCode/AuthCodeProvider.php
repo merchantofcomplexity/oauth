@@ -2,7 +2,9 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode;
 
-class AuthCodeProvider
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
+
+class AuthCodeProvider implements ProvideAuthCode
 {
     /**
      * @var AuthCodeModel

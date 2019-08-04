@@ -55,7 +55,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
 
     public function persistNewAccessToken(AccessTokenEntityInterface $accessTokenEntity): void
     {
-        if ($this->accessTokenProvider->tokenOfIdentifier($accessTokenEntity->getClient()->getIdentifier())) {
+        if ($this->accessTokenProvider->tokenOfIdentifier($accessTokenEntity->getIdentifier())) {
             throw UniqueTokenIdentifierConstraintViolationException::create();
         }
 

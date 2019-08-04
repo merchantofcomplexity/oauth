@@ -2,7 +2,9 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\Scope;
 
-class ScopeProvider
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideScope;
+
+class ScopeProvider implements ProvideScope
 {
     /**
      * @var array

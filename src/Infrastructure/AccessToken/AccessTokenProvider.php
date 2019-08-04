@@ -5,8 +5,9 @@ namespace MerchantOfComplexity\Oauth\Infrastructure\AccessToken;
 use Carbon\Carbon;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 
-class AccessTokenProvider
+class AccessTokenProvider implements ProvideAccessToken
 {
     /**
      * @var AccessTokenModel

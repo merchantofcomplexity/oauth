@@ -9,7 +9,7 @@
 * setup contract for auth providers
 
 
-## 
+## Setup
 
 * User repository interface need to be bound by dev to include his own 
 identity provider and credentials validator
