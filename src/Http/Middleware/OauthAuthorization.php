@@ -20,9 +20,9 @@ final class OauthAuthorization extends OauthApproval
         $authRequest = $this->authorizationServer->validateAuthorizationRequest($psrRequest);
 
         if (!$this->hasValidAuthorization($authRequest, $identity)) {
-            $scopesModels = $this->scopeBuilder->toModelArray(...$authRequest->getScopes());
+            $scopesModels = $this->scopeManager->toModelArray(...$authRequest->getScopes());
 
-            $scopes = $this->scopeBuilder->filterScopes(...$scopesModels);
+            $scopes = $this->scopeManager->filterScopes(...$scopesModels);
 
             return $this->buildAuthorizationView($authRequest, $identity, $request, ...$scopes);
         }
@@ -44,11 +44,11 @@ final class OauthAuthorization extends OauthApproval
             return false;
         }
 
-        $scopes = $this->scopeBuilder->filterScopes(...$token->getScopes());
+        $scopes = $this->scopeManager->filterScopes(...$token->getScopes());
 
-        $scopeEntities = $this->scopeBuilder->toLeagueArray(...$scopes);
+        $scopeEntities = $this->scopeManager->toLeagueArray(...$scopes);
 
-        return  $this->scopeBuilder->equalsScopes($scopeEntities, $authRequest->getScopes());
+        return $this->scopeManager->equalsScopes($scopeEntities, $authRequest->getScopes());
     }
 
     protected function buildAuthorizationView(AuthorizationRequest $authorizationRequest,

@@ -10,7 +10,7 @@ use MerchantOfComplexity\Oauth\Support\ConvertPsrResponses;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
 
-class OauthTokenIssuer extends Authentication
+final class OauthTokenIssuer extends Authentication
 {
     use ConvertPsrResponses;
 
@@ -41,8 +41,7 @@ class OauthTokenIssuer extends Authentication
                 $this->server->respondToAccessTokenRequest($psrRequest, $psrResponse)
             );
         } catch (OAuthServerException $serverException) {
-            // fixMe
-            throw $serverException;
+            return $serverException->generateHttpResponse($psrResponse);
         }
     }
 

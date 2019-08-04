@@ -4,7 +4,7 @@ namespace MerchantOfComplexity\Oauth\Http\Middleware;
 
 use Illuminate\Http\Request;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Oauth\Support\Value\ClientRedirectUri;
+use MerchantOfComplexity\Oauth\Support\Value\DeniedClientRedirectUri;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +19,7 @@ final class OauthAuthorizationDenied extends OauthApproval
         $authRequest = $this->extractAuthorizationRequestFromSession($request);
 
         return $this->responseFactory->redirectTo(
-            ClientRedirectUri::fromAuthorizationRequest($authRequest, $request)->getValue()
+            DeniedClientRedirectUri::fromRequests($authRequest, $request)->getValue()
         );
     }
 

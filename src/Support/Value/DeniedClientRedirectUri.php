@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 
-class ClientRedirectUri
+class DeniedClientRedirectUri
 {
     /**
      * @var string
@@ -18,7 +18,7 @@ class ClientRedirectUri
         $this->uri = $uri;
     }
 
-    public static function fromAuthorizationRequest(AuthorizationRequest $authRequest, Request $request): self
+    public static function fromRequests(AuthorizationRequest $authRequest, Request $request): self
     {
         $clientUris = Arr::wrap($authRequest->getClient()->getRedirectUri());
 

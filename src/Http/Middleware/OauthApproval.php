@@ -47,7 +47,7 @@ abstract class OauthApproval extends Authentication
     /**
      * @var ScopeManager
      */
-    protected $scopeBuilder;
+    protected $scopeManager;
 
     /**
      * @var OauthUserTransformer
@@ -64,11 +64,10 @@ abstract class OauthApproval extends Authentication
      */
     protected $httpMessageFactory;
 
-
     public function __construct(AuthorizationServer $authorizationServer,
                                 ClientProvider $clientProvider,
                                 AccessTokenProvider $accessTokenProvider,
-                                ScopeManager $scopeBuilder,
+                                ScopeManager $scopeManager,
                                 OauthUserTransformer $userTransformer,
                                 ResponseFactory $responseFactory,
                                 HttpMessageFactoryInterface $httpMessageFactory)
@@ -76,7 +75,7 @@ abstract class OauthApproval extends Authentication
         $this->authorizationServer = $authorizationServer;
         $this->clientProvider = $clientProvider;
         $this->accessTokenProvider = $accessTokenProvider;
-        $this->scopeBuilder = $scopeBuilder;
+        $this->scopeManager = $scopeManager;
         $this->userTransformer = $userTransformer;
         $this->responseFactory = $responseFactory;
         $this->httpMessageFactory = $httpMessageFactory;
@@ -132,7 +131,7 @@ abstract class OauthApproval extends Authentication
         return $authRequest;
     }
 
-    public function extractTokenIdentity(): Identity
+    protected function extractTokenIdentity(): Identity
     {
         if (!$token = $this->guard->storage()->getToken()) {
             throw new AuthenticationException("You must login first");

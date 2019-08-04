@@ -10,16 +10,16 @@ final class AuthorizationRequestMatcher implements AuthenticationRequest
     /**
      * @var string
      */
-    private $authorizeRouteName;
+    private $authorizeUri;
 
-    public function __construct(string $authorizeRouteName = 'oauth.authorization')
+    public function __construct(string $authorizeUri = 'oauth/authorize*')
     {
-        $this->authorizeRouteName = $authorizeRouteName;
+        $this->authorizeUri = $authorizeUri;
     }
 
     public function match(Request $request): bool
     {
-        return $request->route()->getName() === $this->authorizeRouteName;
+        return $request->is($this->authorizeUri);
     }
 
     public function extractCredentials(Request $request)
