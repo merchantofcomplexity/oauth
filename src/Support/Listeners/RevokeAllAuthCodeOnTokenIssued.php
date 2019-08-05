@@ -5,7 +5,7 @@ namespace MerchantOfComplexity\Oauth\Support\Listeners;
 use League\Event\EventInterface;
 use League\Event\ListenerInterface;
 use League\OAuth2\Server\RequestEvent;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
 class RevokeAllAuthCodeOnTokenIssued implements ListenerInterface
 {
@@ -14,7 +14,7 @@ class RevokeAllAuthCodeOnTokenIssued implements ListenerInterface
      */
     private $clientProvider;
 
-    public function __construct(ClientProvider $clientProvider)
+    public function __construct(ProvideClient $clientProvider)
     {
         $this->clientProvider = $clientProvider;
     }
