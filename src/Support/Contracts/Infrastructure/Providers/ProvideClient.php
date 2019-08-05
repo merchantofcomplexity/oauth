@@ -2,7 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 
 interface ProvideClient
@@ -22,6 +22,13 @@ interface ProvideClient
      * @return Collection
      */
     public function usersOfClient(string $identifier): Collection;
+
+    /**
+     * Find all applications of identity
+     * @param string $identityId
+     * @return Collection
+     */
+    public function applicationsOfIdentity(string $identityId): Collection;
 
     /**
      * Revoke all authorization codes by client identifier

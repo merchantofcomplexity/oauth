@@ -17,7 +17,6 @@ use League\OAuth2\Server\Grant\PasswordGrant;
 use League\OAuth2\Server\Grant\RefreshTokenGrant;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
@@ -37,6 +36,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\Provid
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideScope;
+use MerchantOfComplexity\Oauth\Support\Contracts\League\Repository\ClientRepositoryInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer as BaseOauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer as BaseScopeTransformer;
 use MerchantOfComplexity\Oauth\Support\Transformer\OauthUserTransformer;

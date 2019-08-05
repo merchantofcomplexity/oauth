@@ -5,7 +5,6 @@
 # TODO
 
 * auth in OauthAuthentication could also be done via access token through jwt
-* setup contract for auth providers
 
 * implicit grant
 * refresh token grant

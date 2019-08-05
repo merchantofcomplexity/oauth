@@ -2,7 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
@@ -26,9 +26,17 @@ class ClientProvider implements ProvideClient
             ->first();
     }
 
+    public function applicationsOfIdentity(string $identityId): Collection
+    {
+        return $this->model
+            ->newModelQuery()
+            ->where('identity_id', $identityId)
+            ->get();
+    }
+
     public function usersOfClient(string $identifier): Collection
     {
-        // fix oauth identity model
+        // fixMe
     }
 
     public function revokeAuthCodesByClientId(string $identifier): void
