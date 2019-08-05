@@ -2,7 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
-use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\RefreshTokenInterface;
 
 interface ProvideRefreshToken
 {
@@ -10,15 +10,14 @@ interface ProvideRefreshToken
      * Find refresh token by his identifier
      *
      * @param string $identifier
-     * @return RefreshTokenModel|null
+     * @return RefreshTokenInterface|null
      */
-    public function refreshTokenOfIdentifier(string $identifier): ?RefreshTokenModel;
+    public function refreshTokenOfIdentifier(string $identifier): ?RefreshTokenInterface;
 
     /**
      * Persist new refresh token
      *
      * @param array $data
-     * @return RefreshTokenModel
      */
-    public function store(array $data): RefreshTokenModel;
+    public function store(array $data): void;
 }

@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
 use MerchantOfComplexity\Oauth\Infrastructure\HasScopes;
 use MerchantOfComplexity\Oauth\Infrastructure\HasTokenModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAccessToken;
 
-class AccessTokenModel extends Model
+class AccessTokenModel extends Model implements WithAccessToken
 {
     use HasTokenModel, HasScopes, HasRevoke;
 

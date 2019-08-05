@@ -141,7 +141,9 @@ abstract class OauthApproval extends Authentication
         }
 
         if (!$token instanceof LocalToken && !$token instanceof RecallerToken) {
-            throw new AuthenticationServiceFailure("only local and recaller token are allowed for oauth");
+            throw new AuthenticationServiceFailure(
+                "only local and recaller token are allowed for oauth"
+            );
         }
 
         return $token->getIdentity();

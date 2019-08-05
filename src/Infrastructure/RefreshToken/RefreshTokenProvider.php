@@ -2,21 +2,23 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\RefreshToken;
 
+use Illuminate\Database\Eloquent\Model;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\RefreshTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
 
 class RefreshTokenProvider implements ProvideRefreshToken
 {
     /**
-     * @var RefreshTokenModel
+     * @var RefreshTokenInterface|Model
      */
     private $model;
 
-    public function __construct(RefreshTokenModel $refreshTokenModel)
+    public function __construct(RefreshTokenInterface $refreshTokenModel)
     {
         $this->model = $refreshTokenModel;
     }
 
-    public function refreshTokenOfIdentifier(string $identifier): ?RefreshTokenModel
+    public function refreshTokenOfIdentifier(string $identifier): ?RefreshTokenInterface
     {
         return $this->model
             ->newModelQuery()
@@ -24,12 +26,10 @@ class RefreshTokenProvider implements ProvideRefreshToken
             ->first();
     }
 
-    public function store(array $data): RefreshTokenModel
+    public function store(array $data): void
     {
         $token = $this->model->newInstance($data);
 
         $token->save($data);
-
-        return $token;
     }
 }

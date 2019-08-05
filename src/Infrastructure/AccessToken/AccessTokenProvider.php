@@ -3,23 +3,27 @@
 namespace MerchantOfComplexity\Oauth\Infrastructure\AccessToken;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
+use MerchantOfComplexity\Authters\Exception\RuntimeException;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 
 class AccessTokenProvider implements ProvideAccessToken
 {
     /**
-     * @var AccessTokenModel
+     * @var WithClient|Model
      */
     private $model;
 
-    public function __construct(AccessTokenModel $model)
+    public function __construct(WithClient $model)
     {
         $this->model = $model;
     }
 
-    public function tokenOfIdentifier(string $identifier): ?AccessTokenModel
+    public function tokenOfIdentifier(string $identifier): ?AccessTokenInterface
     {
         return $this->model
             ->newModelQuery()
@@ -27,10 +31,10 @@ class AccessTokenProvider implements ProvideAccessToken
             ->first();
     }
 
-    public function findValidToken(ClientModel $clientModel, Identity $identity): ?AccessTokenModel
+    public function findValidToken(ClientInterface $clientModel, Identity $identity): ?AccessTokenInterface
     {
-        if (!$clientModel->exists) {
-            return null;
+        if (!$clientModel instanceof WithClient) {
+            throw new RuntimeException("invalid client model");
         }
 
         $token = $clientModel->tokens()
@@ -43,12 +47,10 @@ class AccessTokenProvider implements ProvideAccessToken
         return $token instanceof AccessTokenModel ? $token : null;
     }
 
-    public function store(array $data): AccessTokenModel
+    public function store(array $data): void
     {
         $token = $this->model->newInstance($data);
 
         $token->save($data);
-
-        return $token;
     }
 }

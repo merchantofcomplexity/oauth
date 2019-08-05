@@ -2,23 +2,26 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
 class ClientProvider implements ProvideClient
 {
     /**
-     * @var ClientModel
+     * @var ClientInterface|Model
      */
     private $model;
 
-    public function __construct(ClientModel $clientModel)
+    public function __construct(ClientInterface $clientModel)
     {
         $this->model = $clientModel;
     }
 
-    public function clientOfIdentifier(string $identifier): ?ClientModel
+    public function clientOfIdentifier(string $identifier): ?ClientInterface
     {
         return $this->model
             ->newModelQuery()
@@ -41,6 +44,7 @@ class ClientProvider implements ProvideClient
 
     public function revokeAuthCodesByClientId(string $identifier): void
     {
+        /** @var WithClient $client */
         if ($client = $this->clientOfIdentifier($identifier)) {
             $client
                 ->authCodes()
@@ -52,8 +56,8 @@ class ClientProvider implements ProvideClient
         }
     }
 
-    public function store(array $data): ClientModel
+    public function store(array $data): void
     {
-        return $this->model->newModelQuery()->create($data);
+        $this->model->newModelQuery()->create($data);
     }
 }

@@ -6,29 +6,31 @@ use MerchantOfComplexity\Authters\Support\Contract\Value\ClearCredentials;
 use MerchantOfComplexity\Authters\Support\Contract\Value\Value;
 use MerchantOfComplexity\Authters\Support\Exception\Assert;
 
-final class OauthSecret implements ClearCredentials
+class CodeChallenge implements ClearCredentials
 {
     /**
      * @var string
      */
-    private $secret;
+    private $challenge;
 
-    protected function __construct(string $secret)
+    protected function __construct(string $challenge)
     {
-        $this->secret = $secret;
+        $this->challenge = $challenge;
     }
 
     public static function nextIdentity(): self
     {
-        return new self(hash('sha512', random_bytes(32)));
+        $codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+
+        return rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
     }
 
-    public static function fromString($secret): self
+    public static function fromString($challenge): self
     {
-        Assert::notBlank($secret);
-        Assert::length($secret, 128);
+        Assert::notBlank($challenge);
+        Assert::length($challenge, 43);
 
-        return new self($secret);
+        return new self($challenge);
     }
 
     public function sameValueAs(Value $aValue): bool
@@ -38,6 +40,6 @@ final class OauthSecret implements ClearCredentials
 
     public function getValue(): string
     {
-        return $this->secret;
+        return $this->challenge;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 
 interface ProvideScope
 {
@@ -10,14 +10,14 @@ interface ProvideScope
      * Find scope by his identifier
      *
      * @param string $identifier
-     * @return ScopeModel|null
+     * @return ScopeInterface|null
      */
-    public function scopeOfIdentifier(string $identifier): ?ScopeModel;
+    public function scopeOfIdentifier(string $identifier): ?ScopeInterface;
 
     /**
      * Persist new scope
      *
-     * @param ScopeModel $scope
+     * @param ScopeInterface $scope
      */
-    public function store(ScopeModel $scope): void;
+    public function store(ScopeInterface $scope): void;
 }

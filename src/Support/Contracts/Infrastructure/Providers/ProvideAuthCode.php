@@ -2,7 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AuthorizationCodeInterface;
 
 interface ProvideAuthCode
 {
@@ -10,15 +10,14 @@ interface ProvideAuthCode
      * Find Authorization code by his identifier
      *
      * @param string $identifier
-     * @return AuthCodeModel|null
+     * @return AuthorizationCodeInterface|null
      */
-    public function authCodeOfIdentifier(string $identifier): ?AuthCodeModel;
+    public function authCodeOfIdentifier(string $identifier): ?AuthorizationCodeInterface;
 
     /**
      * Persist new authorization code
      *
      * @param array $data
-     * @return AuthCodeModel
      */
-    public function store(array $data): AuthCodeModel;
+    public function store(array $data): void;
 }

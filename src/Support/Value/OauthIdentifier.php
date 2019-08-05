@@ -20,7 +20,7 @@ final class OauthIdentifier implements IdentifierValue
 
     public static function nextIdentity(): self
     {
-        return hash('md5', random_bytes(16));
+        return new self(hash('md5', random_bytes(16)));
     }
 
     public static function fromString($identifier): self

@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
 use MerchantOfComplexity\Oauth\Infrastructure\HasScopes;
 use MerchantOfComplexity\Oauth\Infrastructure\HasTokenModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAuthorizationCode;
 
-class AuthCodeModel extends Model
+class AuthCodeModel extends Model implements WithAuthorizationCode
 {
     use HasTokenModel, HasScopes, HasRevoke;
 

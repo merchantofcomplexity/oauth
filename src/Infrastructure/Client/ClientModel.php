@@ -11,8 +11,9 @@ use MerchantOfComplexity\Oauth\Infrastructure\HasGrants;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRedirectUri;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
 use MerchantOfComplexity\Oauth\Infrastructure\OauthIdentityModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 
-class ClientModel extends Model
+class ClientModel extends Model implements WithClient
 {
     use HasGrants, HasRedirectUri, HasRevoke;
 
@@ -25,7 +26,7 @@ class ClientModel extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'identifier', 'secret', 'identity_id', 'app_name', 'revoked'
+        'identifier', 'secret', 'identity_id', 'app_name', 'redirect_uris', 'revoked'
     ];
 
     protected $hidden = 'secret';

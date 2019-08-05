@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithRefreshToken;
 
-class RefreshTokenModel extends Model
+class RefreshTokenModel extends Model implements WithRefreshToken
 {
     use HasRevoke;
 

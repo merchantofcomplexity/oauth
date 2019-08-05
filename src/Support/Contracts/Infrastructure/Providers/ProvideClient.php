@@ -4,6 +4,7 @@ namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
 use Illuminate\Support\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 
 interface ProvideClient
 {
@@ -11,9 +12,9 @@ interface ProvideClient
      * Find client by his identifier
      *
      * @param string $identifier
-     * @return ClientModel|null
+     * @return ClientInterface|null
      */
-    public function clientOfIdentifier(string $identifier): ?ClientModel;
+    public function clientOfIdentifier(string $identifier): ?ClientInterface;
 
     /**
      * Find all users of client
@@ -25,6 +26,7 @@ interface ProvideClient
 
     /**
      * Find all applications of identity
+     *
      * @param string $identityId
      * @return Collection
      */
@@ -41,7 +43,6 @@ interface ProvideClient
      * Persist new client
      *
      * @param array $data
-     * @return ClientModel
      */
-    public function store(array $data): ClientModel;
+    public function store(array $data): void;
 }

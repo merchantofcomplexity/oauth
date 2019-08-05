@@ -20,9 +20,13 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenModel;
 use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
@@ -31,6 +35,15 @@ use MerchantOfComplexity\Oauth\League\Repository\AuthCodeRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ClientRepository;
 use MerchantOfComplexity\Oauth\League\Repository\RefreshTokenRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ScopeRepository;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AuthorizationCodeInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAuthorizationCode;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithRefreshToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\RefreshTokenInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
@@ -52,18 +65,23 @@ class OauthServerServiceProvider extends ServiceProvider
      */
     protected $defer = true;
 
-    /**
-     * @var array
-     */
-    public $bindings = [
-        BaseScopeTransformer::class => ScopeTransformer::class,
-        BaseOauthUserTransformer::class => OauthUserTransformer::class,
+    protected $models = [
+        AccessTokenInterface::class => AccessTokenModel::class,
+        AuthorizationCodeInterface::class => AuthCodeModel::class,
+        ClientInterface::class => ClientModel::class,
+        RefreshTokenInterface::class => RefreshTokenModel::class,
+        ScopeInterface::class => ScopeModel::class,
+    ];
+
+    protected $providers = [
         ProvideClient::class => ClientProvider::class,
         ProvideAccessToken::class => AccessTokenProvider::class,
         ProvideRefreshToken::class => RefreshTokenProvider::class,
         ProvideAuthCode::class => AuthCodeProvider::class,
         //ProvideScope::class => ScopeProvider::class,
+    ];
 
+    protected $repositories = [
         ClientRepositoryInterface::class => ClientRepository::class,
         //UserRepositoryInterface::class => IdentityRepository::class,
         AccessTokenRepositoryInterface::class => AccessTokenRepository::class,
@@ -72,17 +90,63 @@ class OauthServerServiceProvider extends ServiceProvider
         ScopeRepositoryInterface::class => ScopeRepository::class,
     ];
 
+    /**
+     * @var array
+     */
+    public $bindings = [
+        BaseScopeTransformer::class => ScopeTransformer::class,
+        BaseOauthUserTransformer::class => OauthUserTransformer::class,
+    ];
+
+    /**
+     * @throws Exception
+     */
     public function register(): void
     {
         if (!$this->app->configurationIsCached()) {
             $this->mergeConfigFrom(__DIR__ . '/../../config/oauth.php', 'oauth');
         }
 
+        $this->registerFactories();
+
+        $this->registerInMemoryScopeProvider();
+
+        // todo let the dev bind it
+        $this->registerHttpMessageFactory();
+
+        $this->registerAuthorizationServer();
+
+        $this->registerResourceServer();
+    }
+
+    protected function registerFactories(): void
+    {
         foreach ($this->bindings as $abstract => $concrete) {
             $this->app->bindIf($abstract, $concrete);
         }
 
-        // inMemory ScopeProvider
+        foreach ($this->models as $abstract => $concrete) {
+            $this->app->bindIf($abstract, $concrete);
+        }
+
+        // for eloquent
+        $this->app->alias(AccessTokenInterface::class, WithAccessToken::class);
+        $this->app->alias(AuthorizationCodeInterface::class, WithAuthorizationCode::class);
+        $this->app->alias(RefreshTokenInterface::class, WithRefreshToken::class);
+        $this->app->alias(ClientInterface::class, WithClient::class);
+
+        foreach ($this->providers as $abstract => $concrete) {
+            $this->app->bindIf($abstract, $concrete);
+        }
+
+        foreach ($this->repositories as $abstract => $concrete) {
+            $this->app->bindIf($abstract, $concrete);
+        }
+    }
+
+    protected function registerInMemoryScopeProvider(): void
+    {
+        // todo config
         $this->app->singleton(ProvideScope::class, function () {
             $scopes = config('oauth.scopes', []);
 
@@ -94,13 +158,6 @@ class OauthServerServiceProvider extends ServiceProvider
 
             return $scopeProvider;
         });
-
-        // todo let the dev bind it
-        $this->registerHttpMessageFactory();
-
-        $this->registerAuthorizationServer();
-
-        $this->registerResourceServer();
     }
 
     protected function registerHttpMessageFactory(): void
@@ -179,6 +236,13 @@ class OauthServerServiceProvider extends ServiceProvider
         $server->enableGrantType($grant, $accessTtl);
     }
 
+    /**
+     * @param AuthorizationServer $server
+     * @param DateInterval $authCodeTtl
+     * @param DateInterval $refreshTtl
+     * @param DateInterval $accessTtl
+     * @throws Exception
+     */
     protected function enableAuthorizationCodeGrant(AuthorizationServer $server,
                                                     DateInterval $authCodeTtl,
                                                     DateInterval $refreshTtl,

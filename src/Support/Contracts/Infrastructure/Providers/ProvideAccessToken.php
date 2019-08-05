@@ -3,8 +3,9 @@
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 
 interface ProvideAccessToken
 {
@@ -12,24 +13,23 @@ interface ProvideAccessToken
      * Find access token by his identifier
      *
      * @param string $identifier
-     * @return AccessTokenModel|null
+     * @return AccessTokenInterface|null
      */
-    public function tokenOfIdentifier(string $identifier): ?AccessTokenModel;
+    public function tokenOfIdentifier(string $identifier): ?AccessTokenInterface;
 
     /**
      * Return the last non revoked access token for a client and a user
      *
-     * @param ClientModel $clientModel
+     * @param ClientInterface $clientModel
      * @param Identity $identity
-     * @return AccessTokenModel|null
+     * @return AccessTokenInterface|null
      */
-    public function findValidToken(ClientModel $clientModel, Identity $identity): ?AccessTokenModel;
+    public function findValidToken(ClientInterface $clientModel, Identity $identity): ?AccessTokenInterface;
 
     /**
      * Persist new access token
      *
      * @param array $data
-     * @return AccessTokenModel
      */
-    public function store(array $data): AccessTokenModel;
+    public function store(array $data): void;
 }

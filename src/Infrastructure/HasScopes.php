@@ -3,11 +3,12 @@
 namespace MerchantOfComplexity\Oauth\Infrastructure;
 
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 
 trait HasScopes
 {
     /**
-     * @return ScopeModel[]
+     * @return ScopeInterface[]
      */
     public function getScopes(): array
     {

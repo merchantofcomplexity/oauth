@@ -6,11 +6,12 @@ use BadMethodCallException;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 
 /**
- * @method ScopeTransformer toLeague(ScopeModel $scope)
- * @method ScopeTransformer toLeagueArray(ScopeModel $scope)
+ * @method ScopeTransformer toLeague(ScopeInterface $scope)
+ * @method ScopeTransformer toLeagueArray(ScopeInterface $scope)
  * @method ScopeTransformer toModel(ScopeEntityInterface $scope)
  * @method ScopeTransformer toModelArray(ScopeEntityInterface $scope)
  * @method ScopeTransformer toStringArray($scope)
@@ -34,10 +35,10 @@ class ScopeManager
     }
 
     /**
-     * @param ScopeModel[] $scopes
+     * @param ScopeInterface[] $scopes
      * @return ScopeModel[]
      */
-    public function filterScopes(ScopeModel ...$scopes): array
+    public function filterScopes(ScopeInterface ...$scopes): array
     {
         $availableScopes = [];
 

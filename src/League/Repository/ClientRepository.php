@@ -3,10 +3,9 @@
 namespace MerchantOfComplexity\Oauth\League\Repository;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
-
 use MerchantOfComplexity\Authters\Support\Contract\Value\IdentifierValue;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 use MerchantOfComplexity\Oauth\League\Entity\Client;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\League\Repository\ClientRepositoryInterface;
 use MerchantOfComplexity\Oauth\Support\Value\OauthIdentifier;
@@ -76,7 +75,7 @@ final class ClientRepository implements ClientRepositoryInterface
         $this->clientProvider->store($data);
     }
 
-    protected function isGrantSupported(ClientModel $client, ?string $grant): bool
+    protected function isGrantSupported(ClientInterface $client, ?string $grant): bool
     {
         if (null === $grant || empty($grants = $client->getGrants())) {
             return true;
@@ -85,14 +84,10 @@ final class ClientRepository implements ClientRepositoryInterface
         return in_array($grant, $grants);
     }
 
-    protected function checkCredentials(ClientModel $clientModel, ?string $secret): bool
+    protected function checkCredentials(ClientInterface $clientModel, ?string $secret): bool
     {
         if (!$secret) {
             return true;
-        }
-
-        if(!$clientModel->exists){
-            return false;
         }
 
         return hash_equals($clientModel->getSecret(), $secret);

@@ -2,7 +2,9 @@
 
 namespace MerchantOfComplexity\Oauth\Infrastructure\Scope;
 
-class ScopeModel
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
+
+class ScopeModel implements ScopeInterface
 {
     /**
      * @var string
