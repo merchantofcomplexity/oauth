@@ -22,6 +22,7 @@ use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
@@ -60,7 +61,7 @@ class OauthServerServiceProvider extends ServiceProvider
         ProvideClient::class => ClientProvider::class,
         ProvideAccessToken::class => AccessTokenProvider::class,
         ProvideRefreshToken::class => RefreshTokenProvider::class,
-        ProvideAuthCode::class => AccessTokenProvider::class,
+        ProvideAuthCode::class => AuthCodeProvider::class,
         //ProvideScope::class => ScopeProvider::class,
 
         ClientRepositoryInterface::class => ClientRepository::class,
