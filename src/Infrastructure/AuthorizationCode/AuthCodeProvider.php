@@ -4,16 +4,17 @@ namespace MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode;
 
 use Illuminate\Database\Eloquent\Model;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AuthorizationCodeInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAuthorizationCode;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
 
 class AuthCodeProvider implements ProvideAuthCode
 {
     /**
-     * @var AuthCodeModel|Model
+     * @var WithAuthorizationCode|Model
      */
     private $model;
 
-    public function __construct(AuthorizationCodeInterface $authCodeModel)
+    public function __construct(WithAuthorizationCode $authCodeModel)
     {
         $this->model = $authCodeModel;
     }

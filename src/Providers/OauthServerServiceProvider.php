@@ -298,7 +298,7 @@ class OauthServerServiceProvider extends ServiceProvider
         $fqcnIdentityModel = config('oauth.auth.identity_model');
 
         if (class_exists($fqcnIdentityModel)) {
-            foreach ([AuthCodeModel::class, RefreshTokenModel::class, ClientModel::class] as $model) {
+            foreach ([AuthCodeModel::class, AccessTokenModel::class, ClientModel::class] as $model) {
                 $model::$identityModel = $fqcnIdentityModel;
             }
         }

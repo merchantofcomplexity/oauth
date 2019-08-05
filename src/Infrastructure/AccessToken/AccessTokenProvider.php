@@ -8,17 +8,18 @@ use MerchantOfComplexity\Authters\Exception\RuntimeException;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAccessToken;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 
 class AccessTokenProvider implements ProvideAccessToken
 {
     /**
-     * @var WithClient|Model
+     * @var WithAccessToken|Model
      */
     private $model;
 
-    public function __construct(WithClient $model)
+    public function __construct(WithAccessToken $model)
     {
         $this->model = $model;
     }

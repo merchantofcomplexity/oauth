@@ -5,6 +5,7 @@ namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
@@ -12,11 +13,11 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\Provid
 class ClientProvider implements ProvideClient
 {
     /**
-     * @var ClientInterface|Model
+     * @var WithClient|Model
      */
     private $model;
 
-    public function __construct(ClientInterface $clientModel)
+    public function __construct(WithClient $clientModel)
     {
         $this->model = $clientModel;
     }
@@ -39,7 +40,22 @@ class ClientProvider implements ProvideClient
 
     public function usersOfClient(string $identifier): Collection
     {
-        // fixMe
+        // checkMe optimize query
+
+        $client = $this->model
+            ->newModelQuery()
+            ->with('tokens.identity')
+            ->where('revoked', 0)
+            ->where('identifier', $identifier)
+            ->first();
+
+        if ($client) {
+            return $client->getRelation('tokens')->groupBy(function (AccessTokenInterface $accessToken) {
+                return $accessToken->getIdentityId();
+            });
+        }
+
+        return new Collection();
     }
 
     public function revokeAuthCodesByClientId(string $identifier): void
