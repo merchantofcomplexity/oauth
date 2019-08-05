@@ -10,7 +10,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\Provid
 class RevokeAllAuthCodeOnTokenIssued implements ListenerInterface
 {
     /**
-     * @var $clientProvider
+     * @var ProvideClient $clientProvider
      */
     private $clientProvider;
 

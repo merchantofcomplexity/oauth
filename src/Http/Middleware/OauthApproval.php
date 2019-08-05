@@ -13,8 +13,6 @@ use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\LocalTok
 use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\RecallerToken;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationServiceFailure;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer;
@@ -37,12 +35,12 @@ abstract class OauthApproval extends Authentication
     protected $authorizationServer;
 
     /**
-     * @var ClientProvider
+     * @var ProvideClient
      */
     protected $clientProvider;
 
     /**
-     * @var AccessTokenProvider
+     * @var ProvideAccessToken
      */
     protected $accessTokenProvider;
 

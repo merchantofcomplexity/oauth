@@ -5,7 +5,7 @@ namespace MerchantOfComplexity\Oauth\Http\Middleware;
 use Illuminate\Http\Request;
 use League\OAuth2\Server\RequestTypes\AuthorizationRequest;
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,7 +54,7 @@ final class OauthAuthorization extends OauthApproval
     protected function buildAuthorizationView(AuthorizationRequest $authorizationRequest,
                                               Identity $identity,
                                               Request $request,
-                                              ScopeModel ...$scopes): Response
+                                              ScopeInterface ...$scopes): Response
     {
         $request->session()->flash(self::SESSION_OAUTH_KEY, $authorizationRequest);
 
