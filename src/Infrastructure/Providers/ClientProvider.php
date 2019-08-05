@@ -1,10 +1,10 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;

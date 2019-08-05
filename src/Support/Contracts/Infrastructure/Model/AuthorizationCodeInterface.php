@@ -3,7 +3,6 @@
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model;
 
 use DateTimeInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 
 interface AuthorizationCodeInterface
 {

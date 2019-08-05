@@ -4,7 +4,6 @@ namespace MerchantOfComplexity\Oauth\Support;
 
 use BadMethodCallException;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
@@ -36,7 +35,7 @@ class ScopeManager
 
     /**
      * @param ScopeInterface[] $scopes
-     * @return ScopeModel[]
+     * @return ScopeInterface[]
      */
     public function filterScopes(ScopeInterface ...$scopes): array
     {

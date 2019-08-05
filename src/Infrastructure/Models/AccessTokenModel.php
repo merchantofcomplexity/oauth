@@ -1,16 +1,16 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
-use MerchantOfComplexity\Oauth\Infrastructure\HasScopes;
-use MerchantOfComplexity\Oauth\Infrastructure\HasTokenModel;
-use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAuthorizationCode;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasRevoke;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasScopes;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasTokens;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAccessToken;
 
-class AuthCodeModel extends Model implements WithAuthorizationCode
+class AccessTokenModel extends Model implements WithAccessToken
 {
-    use HasTokenModel, HasScopes, HasRevoke;
+    use HasTokens, HasScopes, HasRevoke;
 
     /**
      * Fqcn identity model
@@ -22,7 +22,7 @@ class AuthCodeModel extends Model implements WithAuthorizationCode
     /**
      * @var string
      */
-    protected $table = 'oauth2_authorization_code';
+    protected $table = 'oauth2_access_token';
 
     /**
      * @var string

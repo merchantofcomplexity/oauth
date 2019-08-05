@@ -1,6 +1,6 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\Scope;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models;
 
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 

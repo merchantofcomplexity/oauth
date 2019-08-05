@@ -1,8 +1,8 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns;
 
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\ScopeModel;
 
 trait HasScopes
 {

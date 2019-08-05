@@ -3,7 +3,6 @@
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
 use Illuminate\Support\Collection;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 
 interface ProvideClient

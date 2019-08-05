@@ -3,7 +3,6 @@
 namespace MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers;
 
 use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInterface;
 

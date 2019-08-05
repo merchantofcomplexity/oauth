@@ -20,15 +20,15 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\AccessTokenModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\AuthCodeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\ClientModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\RefreshTokenModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\ScopeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Providers\AccessTokenProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\Providers\AuthCodeProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\Providers\ClientProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
 use MerchantOfComplexity\Oauth\League\Repository\AccessTokenRepository;
 use MerchantOfComplexity\Oauth\League\Repository\AuthCodeRepository;
@@ -54,8 +54,6 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransforme
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer as BaseScopeTransformer;
 use MerchantOfComplexity\Oauth\Support\Transformer\OauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\Transformer\ScopeTransformer;
-use Nyholm\Psr7\Factory\Psr17Factory;
-use Symfony\Bridge\PsrHttpMessage\Factory\PsrHttpFactory;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 
 class OauthServerServiceProvider extends ServiceProvider
@@ -111,9 +109,6 @@ class OauthServerServiceProvider extends ServiceProvider
 
         $this->registerInMemoryScopeProvider();
 
-        // todo let the dev bind it
-        $this->registerHttpMessageFactory();
-
         $this->registerAuthorizationServer();
 
         $this->registerResourceServer();
@@ -157,15 +152,6 @@ class OauthServerServiceProvider extends ServiceProvider
             }
 
             return $scopeProvider;
-        });
-    }
-
-    protected function registerHttpMessageFactory(): void
-    {
-        $this->app->bind(HttpMessageFactoryInterface::class, function (): HttpMessageFactoryInterface {
-            $psr17Factory = new Psr17Factory();
-
-            return new PsrHttpFactory($psr17Factory, $psr17Factory, $psr17Factory, $psr17Factory);
         });
     }
 

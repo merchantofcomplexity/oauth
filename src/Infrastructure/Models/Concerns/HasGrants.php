@@ -1,6 +1,6 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns;
 
 trait HasGrants
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\AccessToken;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Providers;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +45,7 @@ class AccessTokenProvider implements ProvideAccessToken
             ->latest('expires_at')
             ->first();
 
-        return $token instanceof AccessTokenModel ? $token : null;
+        return $token instanceof AccessTokenInterface ? $token : null;
     }
 
     public function store(array $data): void

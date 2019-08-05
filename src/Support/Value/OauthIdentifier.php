@@ -2,6 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Value;
 
+use Exception;
 use MerchantOfComplexity\Authters\Support\Contract\Value\IdentifierValue;
 use MerchantOfComplexity\Authters\Support\Contract\Value\Value;
 use MerchantOfComplexity\Authters\Support\Exception\Assert;
@@ -18,6 +19,10 @@ final class OauthIdentifier implements IdentifierValue
         $this->id = $id;
     }
 
+    /**
+     * @return OauthIdentifier
+     * @throws Exception
+     */
     public static function nextIdentity(): self
     {
         return new self(hash('md5', random_bytes(16)));

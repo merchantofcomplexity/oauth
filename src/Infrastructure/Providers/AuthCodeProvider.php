@@ -1,6 +1,6 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AuthorizationCodeInterface;

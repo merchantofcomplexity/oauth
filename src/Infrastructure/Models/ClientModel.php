@@ -1,15 +1,13 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\Client;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
-use MerchantOfComplexity\Oauth\Infrastructure\HasGrants;
-use MerchantOfComplexity\Oauth\Infrastructure\HasRedirectUri;
-use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasGrants;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasRedirectUri;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasRevoke;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 
 class ClientModel extends Model implements WithClient

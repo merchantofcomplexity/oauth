@@ -1,12 +1,14 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\RefreshToken;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Models;
 
+use DateTimeImmutable;
 use DateTimeInterface;
+use DateTimeZone;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenModel;
-use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\Concerns\HasRevoke;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithRefreshToken;
 
 class RefreshTokenModel extends Model implements WithRefreshToken
@@ -50,8 +52,12 @@ class RefreshTokenModel extends Model implements WithRefreshToken
         return $this->getKey();
     }
 
+    /**
+     * @return DateTimeInterface
+     * @throws Exception
+     */
     public function getExpiry(): DateTimeInterface
     {
-        return new \DateTimeImmutable($this['expires_at'], new \DateTimeZone('UTC'));
+        return new DateTimeImmutable($this['expires_at'], new DateTimeZone('UTC'));
     }
 }

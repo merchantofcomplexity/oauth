@@ -2,6 +2,7 @@
 
 namespace MerchantOfComplexity\Oauth\Support\Value;
 
+use Exception;
 use MerchantOfComplexity\Authters\Support\Contract\Value\ClearCredentials;
 use MerchantOfComplexity\Authters\Support\Contract\Value\Value;
 use MerchantOfComplexity\Authters\Support\Exception\Assert;
@@ -18,6 +19,10 @@ class CodeChallenge implements ClearCredentials
         $this->challenge = $challenge;
     }
 
+    /**
+     * @return CodeChallenge
+     * @throws Exception
+     */
     public static function nextIdentity(): self
     {
         $codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
