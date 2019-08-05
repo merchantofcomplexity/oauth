@@ -6,20 +6,20 @@ use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\League\Entity\AccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 
 final class AccessTokenRepository implements AccessTokenRepositoryInterface
 {
     /**
-     * @var AccessTokenProvider
+     * @var ProvideAccessToken
      */
     private $accessTokenProvider;
 
     /**
-     * @var ClientProvider
+     * @var ProvideClient
      */
     private $clientProvider;
 
@@ -28,8 +28,8 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
      */
     private $scopeTransformer;
 
-    public function __construct(AccessTokenProvider $accessTokenProvider,
-                                ClientProvider $clientProvider,
+    public function __construct(ProvideAccessToken $accessTokenProvider,
+                                ProvideClient $clientProvider,
                                 ScopeTransformer $scopeTransformer)
     {
         $this->accessTokenProvider = $accessTokenProvider;
@@ -46,7 +46,7 @@ final class AccessTokenRepository implements AccessTokenRepositoryInterface
         $accessToken->setClient($clientEntity);
         $accessToken->setUserIdentifier($userIdentifier);
 
-        foreach ($scopes as $scope){
+        foreach ($scopes as $scope) {
             $accessToken->addScope($scope);
         }
 

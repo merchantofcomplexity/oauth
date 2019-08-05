@@ -5,17 +5,17 @@ namespace MerchantOfComplexity\Oauth\League\Repository;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
 use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientModel;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\League\Entity\Client;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
 final class ClientRepository implements ClientRepositoryInterface
 {
     /**
-     * @var ClientProvider
+     * @var ProvideClient
      */
     private $clientProvider;
 
-    public function __construct(ClientProvider $clientProvider)
+    public function __construct(ProvideClient $clientProvider)
     {
         $this->clientProvider = $clientProvider;
     }

@@ -21,6 +21,9 @@ use League\OAuth2\Server\Repositories\ClientRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
+use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
 use MerchantOfComplexity\Oauth\League\Repository\AccessTokenRepository;
@@ -28,6 +31,11 @@ use MerchantOfComplexity\Oauth\League\Repository\AuthCodeRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ClientRepository;
 use MerchantOfComplexity\Oauth\League\Repository\RefreshTokenRepository;
 use MerchantOfComplexity\Oauth\League\Repository\ScopeRepository;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideScope;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer as BaseOauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer as BaseScopeTransformer;
 use MerchantOfComplexity\Oauth\Support\Transformer\OauthUserTransformer;
@@ -49,6 +57,12 @@ class OauthServerServiceProvider extends ServiceProvider
     public $bindings = [
         BaseScopeTransformer::class => ScopeTransformer::class,
         BaseOauthUserTransformer::class => OauthUserTransformer::class,
+        ProvideClient::class => ClientProvider::class,
+        ProvideAccessToken::class => AccessTokenProvider::class,
+        ProvideRefreshToken::class => RefreshTokenProvider::class,
+        ProvideAuthCode::class => AccessTokenProvider::class,
+        //ProvideScope::class => ScopeProvider::class,
+
         ClientRepositoryInterface::class => ClientRepository::class,
         //UserRepositoryInterface::class => IdentityRepository::class,
         AccessTokenRepositoryInterface::class => AccessTokenRepository::class,
@@ -68,7 +82,7 @@ class OauthServerServiceProvider extends ServiceProvider
         }
 
         // inMemory ScopeProvider
-        $this->app->singleton(ScopeProvider::class, function () {
+        $this->app->singleton(ProvideScope::class, function () {
             $scopes = config('oauth.scopes', []);
 
             $scopeProvider = new ScopeProvider();
@@ -219,7 +233,8 @@ class OauthServerServiceProvider extends ServiceProvider
         return array_merge(array_keys($this->bindings), [
             HttpMessageFactoryInterface::class,
             AuthorizationServer::class,
-            ResourceServer::class
+            ResourceServer::class,
+            ProvideScope::class
         ]);
     }
 }

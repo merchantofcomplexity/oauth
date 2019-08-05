@@ -5,20 +5,20 @@ namespace MerchantOfComplexity\Oauth\League\Repository;
 use League\OAuth2\Server\Entities\AuthCodeEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
 use MerchantOfComplexity\Oauth\League\Entity\AuthCode;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 
 final class AuthCodeRepository implements AuthCodeRepositoryInterface
 {
     /**
-     * @var AuthCodeProvider
+     * @var ProvideAuthCode
      */
     private $authCodeProvider;
 
     /**
-     * @var ClientProvider
+     * @var ProvideClient
      */
     private $clientProvider;
 
@@ -27,8 +27,8 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
      */
     private $scopeTransformer;
 
-    public function __construct(AuthCodeProvider $authCodeProvider,
-                                ClientProvider $clientProvider,
+    public function __construct(ProvideAuthCode $authCodeProvider,
+                                ProvideClient $clientProvider,
                                 ScopeTransformer $scopeTransformer)
     {
         $this->authCodeProvider = $authCodeProvider;
@@ -66,7 +66,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
     {
         $authCode = $this->authCodeProvider->authCodeOfIdentifier($codeId);
 
-        if($authCode){
+        if ($authCode) {
             $authCode->revoke();
         }
     }

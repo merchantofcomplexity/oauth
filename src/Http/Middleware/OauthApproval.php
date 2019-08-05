@@ -15,6 +15,8 @@ use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationServiceFailure;
 use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Client\ClientProvider;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\OauthUserTransformer;
 use MerchantOfComplexity\Oauth\Support\ConvertPsrResponses;
 use MerchantOfComplexity\Oauth\Support\ScopeManager;
@@ -65,8 +67,8 @@ abstract class OauthApproval extends Authentication
     protected $httpMessageFactory;
 
     public function __construct(AuthorizationServer $authorizationServer,
-                                ClientProvider $clientProvider,
-                                AccessTokenProvider $accessTokenProvider,
+                                ProvideClient $clientProvider,
+                                ProvideAccessToken $accessTokenProvider,
                                 ScopeManager $scopeManager,
                                 OauthUserTransformer $userTransformer,
                                 ResponseFactory $responseFactory,

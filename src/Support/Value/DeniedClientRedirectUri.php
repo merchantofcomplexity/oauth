@@ -26,7 +26,8 @@ class DeniedClientRedirectUri
             $uri = Arr::first($clientUris);
         }
 
-        $separator = $authRequest->getGrantTypeId() === 'implicit' ? '#' : (strstr($uri, '?') ? '&' : '?');
+        $separator = $authRequest->getGrantTypeId() === 'implicit'
+            ? '#' : (strstr($uri, '?') ? '&' : '?');
 
         $query = [
             'error' => 'access_denied',
