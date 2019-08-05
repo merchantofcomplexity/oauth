@@ -4,9 +4,6 @@ namespace MerchantOfComplexity\Oauth\Infrastructure;
 
 trait HasRedirectUri
 {
-    /**
-     * @return string[]
-     */
     public function getRedirectUris(): array
     {
         if (is_string($this['redirect_uris'])) {

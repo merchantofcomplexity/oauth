@@ -1,7 +1,5 @@
 # FIX
 
-* identity model
-
 # TODO
 
 * auth in OauthAuthentication could also be done via access token through jwt
@@ -17,4 +15,6 @@
 
 * User repository interface need to be bound by dev to include his own 
 identity provider and credentials validator
- 
+
+* client model, access token model and refresh token 
+must be booted for identity class

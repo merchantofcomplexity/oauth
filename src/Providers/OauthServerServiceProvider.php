@@ -293,6 +293,17 @@ class OauthServerServiceProvider extends ServiceProvider
         return $emitter;
     }
 
+    public function boot(): void
+    {
+        $fqcnIdentityModel = config('oauth.auth.identity_model');
+
+        if (class_exists($fqcnIdentityModel)) {
+            foreach ([AuthCodeModel::class, RefreshTokenModel::class, ClientModel::class] as $model) {
+                $model::$identityModel = $fqcnIdentityModel;
+            }
+        }
+    }
+
     public function provides(): array
     {
         return array_merge(

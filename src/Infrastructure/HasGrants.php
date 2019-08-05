@@ -4,9 +4,6 @@ namespace MerchantOfComplexity\Oauth\Infrastructure;
 
 trait HasGrants
 {
-    /**
-     * @return string[]
-     */
     public function getGrants(): array
     {
         if (is_string($this['grants'])) {

@@ -4,6 +4,15 @@ use League\OAuth2\Server\RequestEvent;
 
 return [
 
+    'auth' => [
+        /**
+         * Fqcn Identity model related to Client and Access|Refresh token models
+         * Will be booted on model in Service Provider
+         * required
+         */
+        'identity_model' => ''
+    ],
+
     'authorization_server' => [
 
         'private_key' => __DIR__ . '/private.key',
@@ -44,7 +53,7 @@ return [
 
         RequestEvent::USER_AUTHENTICATION_FAILED => [],
 
-        RequestEvent::CLIENT_AUTHENTICATION_FAILED =>[],
+        RequestEvent::CLIENT_AUTHENTICATION_FAILED => [],
 
         RequestEvent::REFRESH_TOKEN_CLIENT_FAILED => [],
     ]
