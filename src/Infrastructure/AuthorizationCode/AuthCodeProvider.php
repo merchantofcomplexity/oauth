@@ -31,7 +31,5 @@ class AuthCodeProvider implements ProvideAuthCode
         $token = $this->model->newInstance($data);
 
         $token->save($data);
-
-        return $token;
     }
 }

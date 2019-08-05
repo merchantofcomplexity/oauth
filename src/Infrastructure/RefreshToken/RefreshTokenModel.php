@@ -13,14 +13,29 @@ class RefreshTokenModel extends Model implements WithRefreshToken
 {
     use HasRevoke;
 
+    /**
+     * @var string
+     */
     protected $table = 'oauth2_refresh_token';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'identifier';
 
+    /**
+     * @var string
+     */
     protected $keyType = 'string';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'identifier', 'access_token', 'expires_at'
     ];

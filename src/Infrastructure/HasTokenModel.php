@@ -15,7 +15,7 @@ trait HasTokenModel
 
     public function identity(): BelongsTo
     {
-        return $this->belongsTo(OauthIdentityModel::class, 'identifier', 'client_id');
+        return $this->belongsTo(static::$identityModel, 'id', 'identity_id');
     }
 
     public function getId(): string

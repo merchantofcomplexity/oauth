@@ -293,13 +293,17 @@ class OauthServerServiceProvider extends ServiceProvider
         return $emitter;
     }
 
-    public function provides()
+    public function provides(): array
     {
-        return array_merge(array_keys($this->bindings), [
-            HttpMessageFactoryInterface::class,
-            AuthorizationServer::class,
-            ResourceServer::class,
-            ProvideScope::class
-        ]);
+        return array_merge(
+            array_keys($this->bindings), array_keys($this->providers), array_keys($this->repositories),
+            [
+                WithClient::class, WithAccessToken::class,
+                WithAuthorizationCode::class, WithRefreshToken::class,
+                ProvideScope::class,
+                HttpMessageFactoryInterface::class,
+                AuthorizationServer::class,
+                ResourceServer::class,
+            ]);
     }
 }

@@ -17,23 +17,45 @@ class ClientModel extends Model implements WithClient
 {
     use HasGrants, HasRedirectUri, HasRevoke;
 
+    /**
+     * Fqcn identity model
+     *
+     * @var null|string
+     */
+    static public $identityModel = null;
+
+    /**
+     * @var string
+     */
     protected $table = 'oauth2_client';
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'identifier';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
     protected $keyType = 'string';
 
+    /**
+     * @var array
+     */
     protected $fillable = [
         'identifier', 'secret', 'identity_id', 'app_name', 'redirect_uris', 'revoked'
     ];
 
+    /**
+     * @var string
+     */
     protected $hidden = 'secret';
 
     public function identity(): BelongsTo
     {
-        return $this->belongsTo(OauthIdentityModel::class, 'id', 'identity_id');
+        return $this->belongsTo(static::$identityModel, 'id', 'identity_id');
     }
 
     public function tokens(): HasMany
