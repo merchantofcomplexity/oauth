@@ -10,7 +10,6 @@ use MerchantOfComplexity\Oauth\Infrastructure\AuthorizationCode\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\HasGrants;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRedirectUri;
 use MerchantOfComplexity\Oauth\Infrastructure\HasRevoke;
-use MerchantOfComplexity\Oauth\Infrastructure\OauthIdentityModel;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 
 class ClientModel extends Model implements WithClient
@@ -39,6 +38,9 @@ class ClientModel extends Model implements WithClient
      */
     public $incrementing = false;
 
+    /**
+     * @var string
+     */
     protected $keyType = 'string';
 
     /**
@@ -55,7 +57,7 @@ class ClientModel extends Model implements WithClient
 
     public function identity(): BelongsTo
     {
-        return $this->belongsTo(static::$identityModel, 'id', 'identity_id');
+        return $this->belongsTo(static::$identityModel, 'identity_id', 'id');
     }
 
     public function tokens(): HasMany

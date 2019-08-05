@@ -10,12 +10,12 @@ trait HasTokenModel
 {
     public function client(): BelongsTo
     {
-        return $this->belongsTo(ClientModel::class, 'identifier', 'client_id');
+        return $this->belongsTo(ClientModel::class, 'client_id', 'identifier');
     }
 
     public function identity(): BelongsTo
     {
-        return $this->belongsTo(static::$identityModel, 'id', 'identity_id');
+        return $this->belongsTo(static::$identityModel, 'identity_id', 'id');
     }
 
     public function getId(): string
