@@ -5,24 +5,24 @@ namespace MerchantOfComplexity\Oauth\League\Repository;
 use League\OAuth2\Server\Entities\RefreshTokenEntityInterface;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\AccessToken\AccessTokenProvider;
-use MerchantOfComplexity\Oauth\Infrastructure\RefreshToken\RefreshTokenProvider;
 use MerchantOfComplexity\Oauth\League\Entity\RefreshToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
 
 final class RefreshTokenRepository implements RefreshTokenRepositoryInterface
 {
     /**
-     * @var RefreshTokenProvider
+     * @var ProvideRefreshToken
      */
     private $refreshTokenProvider;
 
     /**
-     * @var AccessTokenProvider
+     * @var ProvideAccessToken
      */
     private $accessTokenProvider;
 
-    public function __construct(RefreshTokenProvider $refreshTokenProvider,
-                                AccessTokenProvider $accessTokenProvider)
+    public function __construct(ProvideRefreshToken $refreshTokenProvider,
+                                ProvideAccessToken $accessTokenProvider)
     {
         $this->refreshTokenProvider = $refreshTokenProvider;
         $this->accessTokenProvider = $accessTokenProvider;

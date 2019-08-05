@@ -51,7 +51,6 @@ final class ScopeRepository implements ScopeRepositoryInterface
                                    ClientEntityInterface $clientEntity,
                                    $userIdentifier = null): array
     {
-        // checkMe default scopes
         return $scopes;
     }
 }
