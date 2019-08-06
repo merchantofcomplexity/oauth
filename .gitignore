@@ -12,5 +12,5 @@ npm-debug.log
 yarn-error.log
 /.idea
 /build
-/todo.md
+todo.md
 composer.lock

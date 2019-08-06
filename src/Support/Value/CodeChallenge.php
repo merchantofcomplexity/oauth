@@ -27,7 +27,9 @@ class CodeChallenge implements ClearCredentials
     {
         $codeVerifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
 
-        return rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', $codeVerifier, true)), '+/', '-_'), '=');
+
+        return new self($challenge);
     }
 
     public static function fromString($challenge): self

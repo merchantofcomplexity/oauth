@@ -10,7 +10,17 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessToke
 
 interface WithAccessToken extends AccessTokenInterface
 {
+    /**
+     * Return client relation of access token
+     *
+     * @return BelongsTo
+     */
     public function client(): BelongsTo;
 
+    /**
+     * Return identity relation of access token
+     *
+     * @return BelongsTo
+     */
     public function identity(): BelongsTo;
 }

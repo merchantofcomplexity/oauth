@@ -7,7 +7,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Authorizat
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithAuthorizationCode;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAuthCode;
 
-class AuthCodeProvider implements ProvideAuthCode
+final class AuthCodeProvider implements ProvideAuthCode
 {
     /**
      * @var WithAuthorizationCode|Model

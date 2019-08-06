@@ -7,7 +7,17 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Authorizat
 
 interface WithAuthorizationCode extends AuthorizationCodeInterface
 {
+    /**
+     * Return client relation of authorization code
+     *
+     * @return BelongsTo
+     */
     public function client(): BelongsTo;
 
+    /**
+     * Return identity relation of access token
+     *
+     * @return BelongsTo
+     */
     public function identity(): BelongsTo;
 }

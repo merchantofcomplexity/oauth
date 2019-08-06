@@ -7,5 +7,10 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\RefreshTok
 
 interface WithRefreshToken extends RefreshTokenInterface
 {
+    /**
+     * Return access token relation of refresh token
+     *
+     * @return BelongsTo
+     */
     public function accessToken(): BelongsTo;
 }

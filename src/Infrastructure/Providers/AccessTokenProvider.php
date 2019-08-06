@@ -12,7 +12,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\W
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideAccessToken;
 
-class AccessTokenProvider implements ProvideAccessToken
+final class AccessTokenProvider implements ProvideAccessToken
 {
     /**
      * @var WithAccessToken|Model

@@ -17,35 +17,35 @@ interface ClientInterface
     public function isRevoked(): bool;
 
     /**
-     * Client identifier
+     * Return client identifier
      *
      * @return string
      */
     public function getId(): string;
 
     /**
-     * Client secret
+     * Return client secret
      *
      * @return string
      */
     public function getSecret(): string;
 
     /**
-     * Client application name
+     * Return client application name
      *
      * @return string
      */
     public function getAppName(): string;
 
     /**
-     * Redirect uris
+     * Return redirect uris
      *
      * @return string[]
      */
     public function getRedirectUris(): array;
 
     /**
-     * Grants type
+     * Return grants type of client
      *
      * @return string[]
      */

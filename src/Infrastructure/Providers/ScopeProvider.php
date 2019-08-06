@@ -1,11 +1,11 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\Scope;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Providers;
 
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideScope;
 
-class ScopeProvider implements ProvideScope
+final class ScopeProvider implements ProvideScope
 {
     /**
      * @var ScopeInterface[]

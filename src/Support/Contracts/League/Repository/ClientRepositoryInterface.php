@@ -16,7 +16,7 @@ interface ClientRepositoryInterface extends LeagueClientRepository
      * @param OauthIdentifier $oauthIdentifier
      * @param OauthSecret $oauthSecret
      * @param string $appName
-     * @param array $redirectUris
+     * @param string[] $redirectUris
      */
     public function createClient(IdentifierValue $identityId,
                                  OauthIdentifier $oauthIdentifier,

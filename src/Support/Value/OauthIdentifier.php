@@ -43,7 +43,7 @@ final class OauthIdentifier implements IdentifierValue
 
     public function sameValueAs(Value $aValue): bool
     {
-        return $aValue instanceof $this && $this->identify() === $aValue->identify();
+        return $aValue instanceof $this && $this->getValue() === $aValue->getValue();
     }
 
     public function getValue(): string

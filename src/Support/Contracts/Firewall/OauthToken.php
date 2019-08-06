@@ -7,5 +7,10 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface OauthToken extends Tokenable
 {
+    /**
+     * Return implementation of http message request
+     *
+     * @return ServerRequestInterface
+     */
     public function getServerRequest(): ServerRequestInterface;
 }

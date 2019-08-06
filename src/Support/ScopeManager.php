@@ -78,10 +78,19 @@ class ScopeManager
         );
     }
 
+    /**
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
     public function __call(string $name, array $arguments)
     {
         if (!method_exists($this, $name)) {
-            return call_user_func_array([$this->scopeTransformer, $name], [$arguments]);
+            $callback = [$this->scopeTransformer, $name];
+
+            if(is_callable($callback)){
+                return \Closure::fromCallable($callback)($arguments);
+            }
         }
 
         throw new BadMethodCallException(

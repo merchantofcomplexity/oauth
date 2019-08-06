@@ -1,13 +1,13 @@
 <?php
 
-namespace MerchantOfComplexity\Oauth\Infrastructure\RefreshToken;
+namespace MerchantOfComplexity\Oauth\Infrastructure\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithRefreshToken;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\RefreshTokenInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideRefreshToken;
 
-class RefreshTokenProvider implements ProvideRefreshToken
+final class RefreshTokenProvider implements ProvideRefreshToken
 {
     /**
      * @var WithRefreshToken|Model

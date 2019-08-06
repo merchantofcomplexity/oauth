@@ -55,7 +55,7 @@ final class AuthCodeRepository implements AuthCodeRepositoryInterface
             'identifier' => $authCodeEntity->getIdentifier(),
             'client_id' => $client->getId(),
             'identity_id' => $authCodeEntity->getUserIdentifier(),
-            'scopes' => json_encode($this->scopeTransformer->toModelArray($authCodeEntity->getScopes())),
+            'scopes' => json_encode($this->scopeTransformer->toStringArray($authCodeEntity->getScopes())),
             'expires_at' => $authCodeEntity->getExpiryDateTime()
         ];
 

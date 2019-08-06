@@ -10,7 +10,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ClientInte
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\Eloquent\WithClient;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideClient;
 
-class ClientProvider implements ProvideClient
+final class ClientProvider implements ProvideClient
 {
     /**
      * @var WithClient|Model

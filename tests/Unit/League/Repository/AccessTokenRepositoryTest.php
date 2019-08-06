@@ -4,6 +4,7 @@ namespace MerchantOfComplexityTest\Oauth\Unit\League\Repository;
 
 use League\OAuth2\Server\Entities\AccessTokenEntityInterface;
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Repositories\AccessTokenRepositoryInterface;
 use MerchantOfComplexity\Oauth\League\Entity\Scope;
 use MerchantOfComplexity\Oauth\League\Repository\AccessTokenRepository;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\AccessTokenInterface;
@@ -21,26 +22,17 @@ class AccessTokenRepositoryTest extends TestCase
      */
     public function it_create_new_token_entity_instance(): void
     {
-        $clientEntity = $this->prophesize(ClientEntityInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
-
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
+        $repo = $this->accessTokenRepositoryInstance();
 
         $scope = new Scope();
-        $scope->setIdentifier('baz');
+        $scope->setIdentifier('scope_id');
 
-        $token = $repo->getNewToken($clientEntity->reveal(), [$scope], 'bar_bar');
+        $token = $repo->getNewToken($this->clientEntity->reveal(), [$scope], 'identity_id');
 
         $this->assertEquals([$scope], $token->getScopes());
-        $this->assertEquals('bar_bar', $token->getUserIdentifier());
+        $this->assertEquals('identity_id', $token->getUserIdentifier());
         $this->assertInstanceOf(ClientEntityInterface::class, $token->getClient());
-        $this->assertEquals($clientEntity->reveal(), $token->getClient());
+        $this->assertEquals($this->clientEntity->reveal(), $token->getClient());
     }
 
     /**
@@ -48,13 +40,38 @@ class AccessTokenRepositoryTest extends TestCase
      */
     public function it_persist_new_token(): void
     {
-        $tokenEntity = $this->prophesize(AccessTokenEntityInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $client = $this->prophesize(ClientInterface::class);
-        $clientEntity = $this->prophesize(ClientEntityInterface::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
+        $this->tokenEntity->getIdentifier()->willReturn('token_id');
+        $this->tokenEntity->getUserIdentifier()->willReturn('identity_id');
 
+        $scope = new Scope();
+        $scope->setIdentifier('foo');
+
+        $this->tokenEntity->getScopes()->willReturn([$scope]);
+        $this->tokenEntity->getExpiryDateTime()->willReturn(
+            $datetime = new \DateTimeImmutable('now')
+        );
+        $this->scopeTransformer->toStringArray([$scope])->willReturn(['foo']);
+
+        $this->tokenProvider->tokenOfIdentifier('token_id')->willReturn(null);
+
+        $this->tokenEntity->getClient()->willReturn($this->clientEntity);
+        $this->clientEntity->getIdentifier()->willReturn('client_id');
+        $this->clientProvider->clientOfIdentifier('client_id')->willReturn($this->client);
+
+        $this->client->getId()->willReturn('client_id');
+        $this->client->reveal();
+
+        $expected = [
+            'identifier' => 'token_id',
+            'client_id' => 'client_id',
+            'identity_id' => 'identity_id',
+            'scopes' => json_encode(['foo']),
+            'expires_at' => $datetime
+        ];
+
+        $this->tokenProvider->store(Argument::exact($expected))->shouldBeCalled();
+
+        $this->accessTokenRepositoryInstance()->persistNewAccessToken($this->tokenEntity->reveal());
     }
 
     /**
@@ -64,24 +81,14 @@ class AccessTokenRepositoryTest extends TestCase
     public function it_raise_exception_when_token_identifier_already_exists(): void
     {
         $token = $this->prophesize(AccessTokenInterface::class);
-        $tokenEntity = $this->prophesize(AccessTokenEntityInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
 
-        $tokenProvider->tokenOfIdentifier(Argument::type('string'))->willReturn(
+        $this->tokenProvider->tokenOfIdentifier(Argument::type('string'))->willReturn(
             $token->reveal()
         );
 
-        $tokenEntity->getIdentifier()->willReturn('baz');
+        $this->tokenEntity->getIdentifier()->willReturn('baz');
 
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
-
-        $repo->persistNewAccessToken($tokenEntity->reveal());
+        $this->accessTokenRepositoryInstance()->persistNewAccessToken($this->tokenEntity->reveal());
     }
 
     /**
@@ -90,23 +97,13 @@ class AccessTokenRepositoryTest extends TestCase
     public function it_revoke_token(): void
     {
         $token = $this->prophesize(AccessTokenInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
-
         $token->revoke()->shouldBeCalled();
 
-        $tokenProvider->tokenOfIdentifier(Argument::exact('foo'))->willReturn(
+        $this->tokenProvider->tokenOfIdentifier(Argument::exact('token_id'))->willReturn(
             $token->reveal()
         );
 
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
-
-        $repo->revokeAccessToken('foo');
+        $this->accessTokenRepositoryInstance()->revokeAccessToken('token_id');
     }
 
     /**
@@ -115,23 +112,14 @@ class AccessTokenRepositoryTest extends TestCase
     public function it_check_token_is_revoked(): void
     {
         $token = $this->prophesize(AccessTokenInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
 
         $token->isRevoked()->shouldBeCalled()->willReturn(true);
 
-        $tokenProvider->tokenOfIdentifier(Argument::exact('foo'))->willReturn(
+        $this->tokenProvider->tokenOfIdentifier(Argument::exact('token_id'))->willReturn(
             $token->reveal()
         );
 
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
-
-        $this->assertTrue($repo->isAccessTokenRevoked('foo'));
+        $this->assertTrue($this->accessTokenRepositoryInstance()->isAccessTokenRevoked('token_id'));
     }
 
     /**
@@ -140,24 +128,15 @@ class AccessTokenRepositoryTest extends TestCase
     public function it_check_token_is_revoked_2(): void
     {
         $token = $this->prophesize(AccessTokenInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
 
         $token->isRevoked()->shouldNotBeCalled();
         $token->reveal();
 
-        $tokenProvider->tokenOfIdentifier(Argument::exact('foo'))->willReturn(
+        $this->tokenProvider->tokenOfIdentifier(Argument::exact('token_id'))->willReturn(
             null
         );
 
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
-
-        $this->assertTrue($repo->isAccessTokenRevoked('foo'));
+        $this->assertTrue($this->accessTokenRepositoryInstance()->isAccessTokenRevoked('token_id'));
     }
 
     /**
@@ -166,22 +145,39 @@ class AccessTokenRepositoryTest extends TestCase
     public function it_check_token_is_not_revoked(): void
     {
         $token = $this->prophesize(AccessTokenInterface::class);
-        $tokenProvider = $this->prophesize(ProvideAccessToken::class);
-        $clientProvider = $this->prophesize(ProvideClient::class);
-        $scopeTransformer = $this->prophesize(ScopeTransformer::class);
 
         $token->isRevoked()->shouldBeCalled()->willReturn(false);
 
-        $tokenProvider->tokenOfIdentifier(Argument::exact('foo'))->willReturn(
+        $this->tokenProvider->tokenOfIdentifier(Argument::exact('token_id'))->willReturn(
             $token->reveal()
         );
 
-        $repo = new AccessTokenRepository(
-            $tokenProvider->reveal(),
-            $clientProvider->reveal(),
-            $scopeTransformer->reveal(),
-        );
+        $this->assertFalse($this->accessTokenRepositoryInstance()->isAccessTokenRevoked('token_id'));
+    }
 
-        $this->assertFalse($repo->isAccessTokenRevoked('foo'));
+    private function accessTokenRepositoryInstance(): AccessTokenRepositoryInterface
+    {
+        return new AccessTokenRepository(
+            $this->tokenProvider->reveal(),
+            $this->clientProvider->reveal(),
+            $this->scopeTransformer->reveal(),
+        );
+    }
+
+    private $tokenEntity;
+    private $tokenProvider;
+    private $client;
+    private $clientEntity;
+    private $clientProvider;
+    private $scopeTransformer;
+
+    protected function setUp(): void
+    {
+        $this->client = $this->prophesize(ClientInterface::class);
+        $this->clientEntity = $this->prophesize(ClientEntityInterface::class);
+        $this->clientProvider = $this->prophesize(ProvideClient::class);
+        $this->tokenEntity = $this->prophesize(AccessTokenEntityInterface::class);
+        $this->tokenProvider = $this->prophesize(ProvideAccessToken::class);
+        $this->scopeTransformer = $this->prophesize(ScopeTransformer::class);
     }
 }
