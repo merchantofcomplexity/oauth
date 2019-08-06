@@ -3,7 +3,7 @@
 namespace MerchantOfComplexity\Oauth\Support\Transformer;
 
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
-use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeModel;
+use MerchantOfComplexity\Oauth\Infrastructure\Models\ScopeModel;
 use MerchantOfComplexity\Oauth\League\Entity\Scope;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer as Transformer;

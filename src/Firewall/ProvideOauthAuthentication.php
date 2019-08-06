@@ -11,6 +11,7 @@ use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\Authenti
 use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\Tokenable;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationException;
 use MerchantOfComplexity\Authters\Support\Exception\AuthenticationServiceFailure;
+use MerchantOfComplexity\Oauth\Support\Contracts\Firewall\OauthToken as BaseOauthToken;
 use Psr\Http\Message\ServerRequestInterface;
 
 abstract class ProvideOauthAuthentication implements AuthenticationProvider
@@ -41,7 +42,7 @@ abstract class ProvideOauthAuthentication implements AuthenticationProvider
 
     public function authenticate(Tokenable $token): Tokenable
     {
-        if (!$token instanceof OauthToken) {
+        if (!$token instanceof BaseOauthToken) {
             throw AuthenticationServiceFailure::unsupportedToken($token);
         }
 
@@ -66,7 +67,7 @@ abstract class ProvideOauthAuthentication implements AuthenticationProvider
      */
     abstract protected function retrieveIdentity(string $oauthUserId): ?Identity;
 
-    protected function validateRequest(OauthToken $token): ServerRequestInterface
+    protected function validateRequest(BaseOauthToken $token): ServerRequestInterface
     {
         try {
             return $this->resourceServer->validateAuthenticatedRequest(
@@ -79,6 +80,7 @@ abstract class ProvideOauthAuthentication implements AuthenticationProvider
 
     public function supportToken(Tokenable $token): bool
     {
-        return $token instanceof OauthToken && $token->getFirewallKey()->sameValueAs($this->contextKey);
+        return $token instanceof BaseOauthToken
+            && $token->getFirewallKey()->sameValueAs($this->contextKey);
     }
 }

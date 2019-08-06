@@ -6,6 +6,7 @@ use BadMethodCallException;
 use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use MerchantOfComplexity\Oauth\Infrastructure\Scope\ScopeProvider;
 use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Model\ScopeInterface;
+use MerchantOfComplexity\Oauth\Support\Contracts\Infrastructure\Providers\ProvideScope;
 use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 
 /**
@@ -18,7 +19,7 @@ use MerchantOfComplexity\Oauth\Support\Contracts\Transformer\ScopeTransformer;
 class ScopeManager
 {
     /**
-     * @var ScopeProvider
+     * @var ProvideScope
      */
     private $scopeProvider;
 
@@ -27,7 +28,7 @@ class ScopeManager
      */
     private $scopeTransformer;
 
-    public function __construct(ScopeProvider $scopeProvider, ScopeTransformer $scopeTransformer)
+    public function __construct(ProvideScope $scopeProvider, ScopeTransformer $scopeTransformer)
     {
         $this->scopeProvider = $scopeProvider;
         $this->scopeTransformer = $scopeTransformer;

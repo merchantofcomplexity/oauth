@@ -7,10 +7,11 @@ use MerchantOfComplexity\Authters\Support\Contract\Domain\Identity;
 use MerchantOfComplexity\Authters\Support\Contract\Firewall\Key\ContextKey;
 use MerchantOfComplexity\Authters\Support\Contract\Firewall\Key\FirewallKey;
 use MerchantOfComplexity\Authters\Support\Contract\Value\Credentials;
+use MerchantOfComplexity\Oauth\Support\Contracts\Firewall\OauthToken as BaseOauthToken;
 use MerchantOfComplexity\Oauth\Support\Value\AccessTokenId;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class OauthToken extends Token
+final class OauthToken extends Token implements BaseOauthToken
 {
     /**
      * @var ServerRequestInterface
