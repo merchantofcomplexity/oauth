@@ -1,6 +1,7 @@
 <?php
 
 use League\OAuth2\Server\RequestEvent;
+use MerchantOfComplexity\Oauth\Firewall\OauthScopesExpressionProvider;
 
 return [
 
@@ -10,7 +11,17 @@ return [
          * Will be booted on model in Service Provider
          * required
          */
-        'identity_model' => ''
+        'identity_model' => '',
+
+        /**
+         * Register expression providers to the Default Expression Voter
+         * @see \MerchantOfComplexity\Authters\Guard\Authorization\Voter\DefaultExpressionVoter
+         *
+         * the default one just provide as simple has_scope expression
+         */
+        'expression_providers' => [
+            OauthScopesExpressionProvider::class
+        ]
     ],
 
     'authorization_server' => [
