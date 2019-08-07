@@ -19,6 +19,7 @@
   "require-dev": {
   "merchantofcomplexity/authters": "dev-develop",
     "laravel/framework": "5.8.*",
+    "symfony/expression-language": "^4.1",
     "kriswallsmith/buzz": "^1.0",
     "beberlei/assert": "^3.0.0",
     "ramsey/uuid": "^3.8",

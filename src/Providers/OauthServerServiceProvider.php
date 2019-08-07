@@ -20,6 +20,8 @@ use League\OAuth2\Server\Repositories\AuthCodeRepositoryInterface;
 use League\OAuth2\Server\Repositories\RefreshTokenRepositoryInterface;
 use League\OAuth2\Server\Repositories\ScopeRepositoryInterface;
 use League\OAuth2\Server\ResourceServer;
+use MerchantOfComplexity\Authters\Guard\Authorization\Voter\DefaultExpressionVoter;
+use MerchantOfComplexity\Oauth\Firewall\OauthScopesExpressionProvider;
 use MerchantOfComplexity\Oauth\Infrastructure\Models\AccessTokenModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Models\AuthCodeModel;
 use MerchantOfComplexity\Oauth\Infrastructure\Models\ClientModel;
@@ -288,6 +290,13 @@ class OauthServerServiceProvider extends ServiceProvider
                 $model::$identityModel = $fqcnIdentityModel;
             }
         }
+
+        // todo config
+        $this->app->resolving(DefaultExpressionVoter::ALIAS, function (DefaultExpressionVoter $voter) {
+            $voter->addExpressionLanguageProvider(
+                new OauthScopesExpressionProvider()
+            );
+        });
     }
 
     public function provides(): array
