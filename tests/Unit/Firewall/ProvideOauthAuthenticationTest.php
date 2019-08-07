@@ -9,6 +9,7 @@ use MerchantOfComplexity\Authters\Support\Contract\Domain\IdentityProvider;
 use MerchantOfComplexity\Authters\Support\Contract\Firewall\Key\ContextKey;
 use MerchantOfComplexity\Authters\Support\Contract\Guard\Authentication\Tokenable;
 use MerchantOfComplexity\Authters\Support\Contract\Value\IdentifierValue;
+use MerchantOfComplexity\Authters\Support\Exception\IdentityNotFound;
 use MerchantOfComplexity\Oauth\Firewall\OauthToken;
 use MerchantOfComplexity\Oauth\Firewall\ProvideOauthAuthentication;
 use MerchantOfComplexity\Oauth\Support\Contracts\Firewall\OauthToken as BaseOauthToken;
@@ -70,7 +71,7 @@ class ProvideOauthAuthenticationTest extends TestCase
         $token->getServerRequest()->willReturn($request);
 
         $requestValidated->getAttribute('oauth_user_id')->willReturn('foo_bar');
-        $requestValidated->getAttribute('oauth_scopes',[])->willReturn([]);
+        $requestValidated->getAttribute('oauth_scopes', [])->willReturn([]);
 
         $this->server->validateAuthenticatedRequest($request)->willReturn($requestValidated);
 
@@ -86,6 +87,35 @@ class ProvideOauthAuthenticationTest extends TestCase
         $this->assertInstanceOf(OauthToken::class, $authToken);
 
         $this->assertTrue($authToken->isAuthenticated());
+    }
+
+    /**
+     * @test
+     * @expectedException \MerchantOfComplexity\Authters\Support\Exception\IdentityNotFound
+     */
+    public function it_raise_exception_when_identity_not_found(): void
+    {
+        $this->provider->requireIdentityOfIdentifier($this->identifier)->willThrow(
+            new IdentityNotFound('')
+        );
+
+        $auth = $this->authenticationProviderInstance();
+
+        $request = $this->prophesize(ServerRequestInterface::class);
+        $token = $this->prophesize(BaseOauthToken::class);
+        $requestValidated = $this->prophesize(ServerRequestInterface::class);
+
+        $token->getServerRequest()->willReturn($request);
+
+        $requestValidated->getAttribute('oauth_user_id')->willReturn('foo_bar');
+        $requestValidated->getAttribute('oauth_scopes', [])->willReturn([]);
+
+        $this->server->validateAuthenticatedRequest($request)->willReturn($requestValidated);
+
+        $request->reveal();
+        $requestValidated->reveal();
+
+        $auth->authenticate($token->reveal());
     }
 
     /**
@@ -114,14 +144,14 @@ class ProvideOauthAuthenticationTest extends TestCase
         {
             private $identifier;
 
-            public function __construct($provider, $server, $key, $identifier)
+            public function __construct($provider, $server, $key, $identifier = null)
             {
                 parent::__construct($provider->reveal(), $server->reveal(), $key->reveal());
 
                 $this->identifier = $identifier->reveal();
             }
 
-            protected function retrieveIdentity(string $oauthUserId): ?Identity
+            protected function retrieveIdentity(string $oauthUserId): Identity
             {
                 return $this->identityProvider->requireIdentityOfIdentifier($this->identifier);
             }

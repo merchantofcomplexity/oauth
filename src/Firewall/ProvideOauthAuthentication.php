@@ -49,10 +49,10 @@ abstract class ProvideOauthAuthentication implements AuthenticationProvider
         $request = $this->validateRequest($token);
 
         // checkMe oauth user id can be null
+        // access token can ne self sufficient and not bound to a user
         $oauthUserId = $request->getAttribute('oauth_user_id');
 
-        // checkMe catch identity not found ?
-        $identity = $this->retrieveIdentity($oauthUserId);
+        $identity = ('' === $oauthUserId) ? null : $this->retrieveIdentity($oauthUserId);
 
         $token = new OauthToken($request, $this->contextKey, $identity);
 
@@ -63,9 +63,9 @@ abstract class ProvideOauthAuthentication implements AuthenticationProvider
 
     /**
      * @param string $oauthUserId
-     * @return Identity|null
+     * @return Identity
      */
-    abstract protected function retrieveIdentity(string $oauthUserId): ?Identity;
+    abstract protected function retrieveIdentity(string $oauthUserId): Identity;
 
     protected function validateRequest(BaseOauthToken $token): ServerRequestInterface
     {
